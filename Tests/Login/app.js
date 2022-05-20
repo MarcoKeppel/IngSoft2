@@ -2,7 +2,26 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const tokenChecker = require('./tokenChecker.js');
+// const tokenChecker = require('./tokenChecker.js');
+
+const jwt = require('jsonwebtoken');
+
+const tokenChecker = function(req, res, next) {
+    // header or url parameters or post parameters
+    const key = "05020516024124375";
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    if (!token) res.status(401).json({success:false,message:'No token provided.'})
+    // decode token, verifies secret and checks expiration
+    jwt.verify(token, key, function(err, decoded) {
+    if (err) res.status(403).json({success:false,message:'Token not valid'})
+        else {
+            // if everything is good, save in req object for use in other routes
+            req.loggedUser = decoded;
+            console.log(loggedUser);
+            next();
+        }
+    });
+};
 
 const authentication = require('./authentication.js');
 const req = require('express/lib/request');
@@ -13,12 +32,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-console.log("Cookies: " + req.cookies);
-
 app.use(cors());
 
-app.use('/', express.static(process.env.FRONTEND || 'static'));
-// If process.env.FRONTEND folder does not contain index.html then use the one from static
+// app.use('/', express.static('static')); // expose also this folder
+
+app.use('/', tokenChecker, function(req, res) {
+    app.use('/', express.static('static', {index: "indexLogged.html"}))
+});
 app.use('/', express.static('static')); // expose also this folder
 
 app.use((req,res,next) => {
