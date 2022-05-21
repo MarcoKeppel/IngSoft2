@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('./models/user'); // get our mongoose model
+const User = require('./models/user.js'); // get our mongoose model
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 
@@ -47,7 +47,6 @@ router.post('', async function(req, res) {
 		id: user._id,
 		self: "api/v1/" + user._id
 	});
-
 });
 
 module.exports = router;

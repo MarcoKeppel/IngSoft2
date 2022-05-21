@@ -2,16 +2,19 @@
 <html>
     <head>
         <title>Login test</title>
+        <script src="script.js"></script>
     </head>
     <body>
-        <form action="api/v1/authentication" method="POST" id="login">
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <input type="submit">
+        <p>Login:</p>
+        <form method="post" action="api/v1/authentication/" id="login">
+            <input id="loginEmail" type="email" name="email" placeholder="Email">
+            <input id="loginPassword" type="password" name="password" placeholder="Password">
+            <input type="submit" onclick="login()">
         </form>
-
-        <form action="api/v1/users/" method="POST" id="register">
-            <input type="text" name="email" placeholder="Email">
+        <br><br><br>
+        <p>Registrazione:</p>
+        <form action="api/v1/users/" method="post" id="register">
+            <input type="email" name="email" placeholder="Email">
             <input type="password" name="password" placeholder="Password">
             <input type="submit">
         </form>
