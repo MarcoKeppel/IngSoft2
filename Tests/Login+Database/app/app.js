@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 
 const authentication = require("./authentication.js");
+const users = require('./users.js');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,6 +17,7 @@ app.use((req,res,next) => {
 })
 
 app.use('/api/v1/authentication', authentication);
+app.use('/api/v1/users', users);
 
 app.use((req, res) => {
     res.status(404);
