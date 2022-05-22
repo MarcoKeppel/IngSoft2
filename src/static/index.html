@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login test</title>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <p>Login:</p>
+        <form method="post" action="api/v1/authentication/" id="login">
+            <input id="loginEmail" type="email" name="email" placeholder="Email">
+            <input id="loginPassword" type="password" name="password" placeholder="Password">
+            <input type="submit" onclick="login()">
+        </form>
+        <br><br><br>
+        <p>Registrazione:</p>
+        <form action="api/v1/users/" method="post" id="register">
+            <input type="email" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit">
+        </form>
+
+        <p>File upload (auth):</p>
+        <form action="api/v1/upload" method="post" id="upload" enctype="multipart/form-data">
+            <input type="file" name="myFile" />
+            <input type="submit">
+        </form>
+    </body>
+</html>
