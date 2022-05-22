@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 const authentication = require('./authentication.js');
@@ -7,6 +8,7 @@ const tokenChecker = require('./tokenChecker.js');
 const home = require('./home.js');
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', express.static(process.env.FRONTEND || 'static'));
@@ -21,7 +23,6 @@ app.use((req,res,next) => {
 app.use('/api/v1/authentication', authentication);
 app.use('/api/v1/users', users);
 app.use('/api/v1/home', tokenChecker, home);
-
 // Stavo provando a fare in modo che se esiste un token il sito ti manda direttamente alla home senza passare per il login ma non riesco a capire come usare il token :(
 // app.use('/', tokenChecker, function(req, res){
 //     if(req.loggedUser)

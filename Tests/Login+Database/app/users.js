@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const User = require('./models/user.js'); // get our mongoose model
+const tokenChecker = require('./tokenChecker.js');
 
-
-
-router.get('/me', async (req, res) => {
+// Questa rotta deve essere autenticata
+router.get('/me', tokenChecker, async (req, res) => {
     if(!req.loggedUser) {
+        res.status(400).json({ error: 'You have to login!' });
         return;
     }
 

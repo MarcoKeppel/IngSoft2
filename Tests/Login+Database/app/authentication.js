@@ -39,6 +39,10 @@ router.post('', async function(req, res) {
 	}
 	var token = jwt.sign(payload, "127E6RR5e725D583a2476", options); // We should use the enviroment
 
+	res.cookie('token', token);
+
+	res.redirect('/api/v1/home');
+	/*
 	res.json({
 		success: true,
 		message: 'Enjoy your token!',
@@ -46,7 +50,7 @@ router.post('', async function(req, res) {
 		email: user.email,
 		id: user._id,
 		self: "api/v1/" + user._id
-	});
+	});*/
 });
 
 module.exports = router;
