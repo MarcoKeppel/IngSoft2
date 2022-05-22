@@ -15,7 +15,8 @@ router.get('/me', tokenChecker, async (req, res) => {
 
     res.status(200).json({
         self: '/api/v1/users/' + user.id,
-        email: user.email
+        email: user.email,
+        pictures : user.pictures
     });
 });
 
@@ -42,7 +43,8 @@ router.post('', async (req, res) => {
     
 	let user = new User({
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        pictures: []
     });
     
     if (!user.email || typeof user.email != 'string' || !checkIfEmailInString(user.email)) {
