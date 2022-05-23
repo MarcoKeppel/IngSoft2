@@ -4,5 +4,6 @@ var Schema = mongoose.Schema;
 // set up a mongoose model
 module.exports = mongoose.model('Picture', new Schema({ 
 	name: String,
-	path: String
+	path: String,
+	time: Number	// Time of upload
 }));

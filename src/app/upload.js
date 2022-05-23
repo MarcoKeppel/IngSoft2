@@ -12,7 +12,8 @@ router.post("/", async (req, res) => {
     const path = __dirname + "/files/" + file.name;
     let picture = new Picture({
         name: file.name,
-        path: path
+        path: path,
+        time: Date.now()
     });
 	await picture.save();
 
