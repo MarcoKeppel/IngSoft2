@@ -1,0 +1,23 @@
+<html>
+    <body>
+        PROFILE!
+        <div id="container"></div>
+        <script>
+            let imgsPath = [];
+            const container = document.getElementById("container");
+            fetch('api/v1/gallery')
+                .then(response => response.json())
+                .then(data => {
+                    for (const img of data) {
+                        
+                        let img2 = document.createElement("img");
+                        img2.setAttribute('src','img/'+img.path);
+                        
+                        container.appendChild(img2);
+                    }
+
+                });
+        </script>
+
+    </body>
+</html>
