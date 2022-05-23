@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Picture = require('./models/picture.js'); // get our mongoose model
 const User = require('./models/user.js'); // get our mongoose model
+const path_module = require('path');
 
 router.post("/", async (req, res) => {
     if (!req.files) {
@@ -10,6 +11,15 @@ router.post("/", async (req, res) => {
   
     const file = req.files.myFile;
     path = __dirname + "/files/";
+    
+    const allowed_files_extensions = ['png', 'jpeg', 'jpg', 'gif'];
+    const allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+    let extension = path_module.extname(file.name);
+
+    if(!allowed_files_extensions.includes(extension) || !allowed_file_types.includes(file.mimetype)){
+        return res.status(415).send("Invalid file type provided");
+    }
+
     console.log(file.name);
     let picture = new Picture({
         name: file.name,
