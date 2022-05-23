@@ -132,4 +132,4 @@ dist
 
 
 # Files directory
-src/app/files/
+app/files/
