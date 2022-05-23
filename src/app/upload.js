@@ -9,13 +9,20 @@ router.post("/", async (req, res) => {
     }
   
     const file = req.files.myFile;
-    const path = __dirname + "/files/" + file.name;
+    path = __dirname + "/files/";
+    console.log(file.name);
     let picture = new Picture({
         name: file.name,
-        path: path
+        path: '',
+        time: Date.now()
     });
-	await picture.save();
+    await picture.save();
 
+    picture.path = picture._id + '.' + file.name.split('.').pop();    // Object ID in DB + extension of original file
+    await picture.save();
+
+    path += picture.path;
+  
     let user = await User.findOne({_id: req.loggedUser.id});
     if (user){
         user.pictures.push(picture);
