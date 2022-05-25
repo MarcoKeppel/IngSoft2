@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: "Discoveroo"
+  description: TODO description
+  license:
+    name: MIT
+    url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
+  servers:
+    - url: https://TODO.com/api/v1
+host: polls.apiblueprint.org
+basePath: /
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+
+paths:
+
+  /authentication:
+    post:
+      description: >-
+        Authenticates an existing user
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+                
+  /users:
+    get:
+      description: >-
+        TODO
+      summary: Fetch user info
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            format: email
+          required: false
+          desctiption: e-mail address of user to find
+      responses:
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+    post:
+      description: >-
+        TODO
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUserRequest'
+      responses:
+        201:
+          description: TODO
+        404:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Descriptive, human-readable,  error message
+                    type: string
+    
+  /upload:
+    post:
+      description: >-
+        TODO
+      summary: Upload a new picture
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+      responses:
+        # TODO should be 201?
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+                
+  /gallery:
+    get:
+      description: >-
+        TODO
+      summary: Get uploaded pictures
+      responses:
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Picture'
+
+components:
+  schemas:
+  
+    AuthenticationResponse:
+      type: object
+      # TODO 'required' field
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        token:
+          type: string
+          format: jwt
+        email:
+          type: string
+          format: email
+        id:
+          type: string
+        self:
+          # TODO what is self?
+          type: string
+      
+    UserResponse:
+      type: object
+      properties:
+        self:
+          type: string
+        email:
+          type: string
+          format: email
+    
+    NewUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+    
+    UploadRequest:
+      type: object
+      properties:
+        myFile:
+          type: string
+          format: binary
+      required:
+        - myFile
+    
+    UploadResponse:
+      type: object
+      # TODO 'required' field
+      properties:
+        status:
+          type: string
+        path:
+          type: string
+    
+    Picture:
+      type: object
+      properties:
+        user:
+          type: string
+        path:
+          type: string
+        time:
+          description: Picture upload time (timestamp, in milliseconds)
+          type: integer
