@@ -9,16 +9,42 @@ router.get('/me', tokenChecker, async (req, res) => {
         res.status(400).json({ error: 'You have to login!' });
         return;
     }
-
+    
     // https://mongoosejs.com/docs/api.html#model_Model.find
-    let user = await User.findOne({email: req.loggedUser.email});
-
+    let user = await User.findOne({username: req.loggedUser.username});
+    if(!user){
+        res.status(400).json({ error: 'User not found!' });
+        return;
+    }
     res.status(200).json({
         self: '/api/v1/users/' + user.id,
         email: user.email,
-        pictures : user.pictures
+        pictures : user.pictures,
+        username: user.username,
     });
 });
+
+router.get('/:username', async (req, res) => {  
+    console.log(req.params.username);
+    if(!req.params.username){
+        res.status(400).json({ error: 'You have to specify a username!' });
+        return;
+    }
+    
+    // https://mongoosejs.com/docs/api.html#model_Model.find
+    let user = await User.findOne({username: req.params.username});
+    if(!user){
+        res.status(400).json({ error: 'User not found!' });
+        return;
+    }
+    res.status(200).json({
+        self: '/api/v1/users/' + user.id,
+        email: user.email,
+        pictures : user.pictures,
+        username: user.username,
+    });
+});
+
 
 router.get('', async (req, res) => {
     let users;
@@ -44,18 +70,40 @@ router.post('', async (req, res) => {
 	let user = new User({
         email: req.body.email,
         password: req.body.password,
+        username: req.body.username,
         pictures: []
     });
     
+    if(!user.username || typeof user.email != 'string'){
+        res.status(400).json({ error: 'Username is required!' });
+        return;
+    }
+    if(user.username == "me"){
+        res.status(400).json({ error: "Username cannot be 'me'!" });
+        return;
+    }
+    if(!user.password || typeof user.email != 'string'){
+        res.status(400).json({ error: 'Password is required!' });
+        return;
+    }
+
     if (!user.email || typeof user.email != 'string' || !checkIfEmailInString(user.email)) {
         res.status(400).json({ error: 'The field "email" must be a non-empty string, in email format' });
         return;
     }
-    let userExists = await  userAlreadyExists(user.email);
-    if (userExists) {
-        res.status(400).json({ error: 'A user with that email already exists.' });
+    let emailExists = await emailAlreadyExists(user.email);
+    let userExists = await userAlreadyExists(user.username);
+    
+    if (emailExists) {
+        res.status(400).json({ error: 'A user with the email ' + user.email + ' already exists.' });
         return;
     }
+
+    if (userExists) {
+        res.status(400).json({ error: 'A user with the username ' + user.username  + ' already exists.' });
+        return;
+    }
+
     
 	user = await user.save();
     
@@ -77,8 +125,13 @@ function checkIfEmailInString(text) {
 }
 
 
-async function userAlreadyExists(e) {
-    let userExists = await User.exists({ email: e });
+async function emailAlreadyExists(e) {
+    let emailExists = await User.exists({ email: e });
+    return emailExists;
+}
+
+async function userAlreadyExists(u) {
+    let userExists = await User.exists({ username: u });
     return userExists;
 }
 
