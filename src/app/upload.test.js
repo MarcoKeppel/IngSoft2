@@ -2,7 +2,7 @@ const app = require('./app');
 const mongoose = require('mongoose');
 const request = require('supertest');
 
-describe('GET /api/v1/booklendings', () => {
+describe('POST /api/v1/upload', () => {
 
     beforeAll( async () => {
         jest.setTimeout(8000);
