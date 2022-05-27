@@ -14,6 +14,7 @@ router.post("/", async (req, res) => {
         name: file.name,
         path: path
     });
+	await picture.save();
 
     let user = await User.findOne({_id: req.loggedUser.id});
     if (user){
