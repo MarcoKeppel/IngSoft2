@@ -14,7 +14,8 @@
     "mongoose": "^6.3.4"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "node -r dotenv/config index.js"
   },
   "author": "",
   "license": "ISC",

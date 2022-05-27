@@ -11,7 +11,7 @@ const port = 3000;
  * Configure mongoose
  */
 // mongoose.Promise = global.Promise;
-app.locals.db = mongoose.connect("mongodb://localhost:27017/Discoveroo", {useNewUrlParser: true, useUnifiedTopology: true})
+app.locals.db = mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 .then ( () => {
     
     console.log("Connected to Database");
