@@ -7,7 +7,7 @@ router.get('', async function(req, res) {
 		message: 'Welcome to your home',
         user: req.loggedUser
 	});
-
 });
+
 
 module.exports = router;

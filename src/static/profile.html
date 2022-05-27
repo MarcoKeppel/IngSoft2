@@ -1,22 +1,37 @@
 <html>
     <body>
-        PROFILE!
+        <h1 id="username"></h1>
         <div id="container"></div>
         <script>
+            var parts = window.location.href.split('/');
+            var lastSegment = parts.pop() || parts.pop();  // handle potential trailing slash
+
+            //console.log(lastSegment);
+
+            fetch('/api/v1/users/'+lastSegment)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("username").innerText = "Profile of: " + data.username;
+
+            });
+
             let imgsPath = [];
             const container = document.getElementById("container");
-            fetch('api/v1/gallery')
+            fetch('/api/v1/gallery/'+lastSegment)
                 .then(response => response.json())
                 .then(data => {
                     for (const img of data) {
                         
                         let img2 = document.createElement("img");
-                        img2.setAttribute('src','img/'+img.path);
+                        img2.setAttribute('src','/img/'+img.path);
                         
                         container.appendChild(img2);
                     }
 
-                });
+            });
+
+            
+
         </script>
 
     </body>

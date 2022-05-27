@@ -6,7 +6,7 @@ const tokenChecker = function(req, res, next) {
     if (!token) res.status(401).json({success:false,message:'No token provided.'})
     // decode token, verifies secret and checks expiration
     else 
-    jwt.verify(token, "127E6RR5e725D583a2476", function(err, decoded) {
+    jwt.verify(token, process.env.SUPER_SECRET, function(err, decoded) {
         if (err) res.status(403).json({success:false,message:'Token not valid'})
         else {
             // if everything is good, save in req object for use in other routes
