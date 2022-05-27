@@ -38,7 +38,7 @@ router.post('', async function(req, res) {
 	var options = {
 		expiresIn: 86400 // expires in 24 hours
 	}
-	var token = jwt.sign(payload, "127E6RR5e725D583a2476", options); // We should use the enviroment
+	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
 
 	res.cookie('token', token);
 
