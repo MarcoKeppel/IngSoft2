@@ -11,11 +11,8 @@ router.get('/me', tokenChecker, async (req, res) => {
     }
     
     // https://mongoosejs.com/docs/api.html#model_Model.find
-    let user = await User.findOne({username: req.loggedUser.username});
-    if(!user){
-        res.status(400).json({ error: 'User not found!' });
-        return;
-    }
+    let user = await User.findOne({_id: req.loggedUser.id});
+    
     res.status(200).json({
         self: '/api/v1/users/' + user.id,
         email: user.email,
@@ -25,7 +22,6 @@ router.get('/me', tokenChecker, async (req, res) => {
 });
 
 router.get('/:username', async (req, res) => {  
-    console.log(req.params.username);
     if(!req.params.username){
         res.status(400).json({ error: 'You have to specify a username!' });
         return;

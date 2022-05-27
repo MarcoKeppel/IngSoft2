@@ -12,12 +12,13 @@ router.post("/", async (req, res) => {
     const file = req.files.myFile;
     path = __dirname + "/files/";
     
-    const allowed_files_extensions = ['png', 'jpeg', 'jpg', 'gif'];
+    const allowed_files_extensions = ['.png', '.jpeg', '.jpg', '.gif'];
     const allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
     let extension = path_module.extname(file.name);
-
+    console.log(extension);
     if(!allowed_files_extensions.includes(extension) || !allowed_file_types.includes(file.mimetype)){
-        return res.status(415).send("Invalid file type provided");
+      console.log(allowed_files_extensions.includes(extension), allowed_file_types.includes(file.mimetype));  
+      return res.status(415).send("Invalid file type provided");
     }
 
     console.log(file.name);

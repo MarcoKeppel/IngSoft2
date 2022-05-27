@@ -38,8 +38,8 @@ app.use('/api/v1/authentication', authentication);
 app.use('/api/v1/users', users);
 app.use('/api/v1/home', tokenChecker, home);
 app.use('/api/v1/upload', tokenChecker, upload);
-app.use('/api/v1/gallery', tokenChecker, gallery);
-app.use('/profile', tokenChecker, profile);
+app.use('/api/v1/gallery', gallery);
+app.use('/profile', profile);
 // Stavo provando a fare in modo che se esiste un token il sito ti manda direttamente alla home senza passare per il login ma non riesco a capire come usare il token :(
 // app.use('/', tokenChecker, function(req, res){
 //     if(req.loggedUser)
