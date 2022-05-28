@@ -1,19 +1,73 @@
 <html>
-    <body>
+    <body onload="updateInfo()">
         <h1 id="username"></h1>
         <div id="container"></div>
+        <input type="button" id='follow' onclick="follow()" value="">
+        <h2 id="followersCount"></h2>
+        <ul id="followers"></ul>
+
+        <h2 id="followsCount"></h2>
+        <ul id="follows"></ul>
+        <div id="error"></div>
         <script>
             var parts = window.location.href.split('/');
             var lastSegment = parts.pop() || parts.pop();  // handle potential trailing slash
 
             //console.log(lastSegment);
 
-            fetch('/api/v1/users/'+lastSegment)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("username").innerText = "Profile of: " + data.username;
+            function follow(){
+                fetch('/api/v1/follow/'+lastSegment)
+                    .then(response => response.json())
+                    .then(result => {
+                        if(result.success){
+                            updateInfo();
+                        }else{
+                            document.getElementById('error').innerText = result.message;
+                        }
+                    
+                });
+            }
 
-            });
+            function updateInfo(){
+                fetch('/api/v1/users/'+lastSegment)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("username").innerText = "Profile of: " + data.username;
+                        if(data.username == data.self){
+                            document.getElementById("username").innerText += " (YOU)";
+                        }
+                        if (data.followers.includes(data.self)){
+                            document.getElementById('follow').value = "Unfollow";
+                        }else{
+                            document.getElementById('follow').value = "Follow";
+                        }
+                        let follows = document.getElementById("follows");                        
+                        document.getElementById("followsCount").innerText = "Following (" + data.follows.length + "):" ;
+                        follows.innerHTML = "";
+                        for(let i = 0; i < data.follows.length; i++){
+                            let li = document.createElement("li");
+                            let a = document.createElement("a");
+                            a.href = "/profile/" + data.follows[i];
+                            a.innerText = data.follows[i];
+                            li.appendChild(a);
+                            follows.appendChild(li);
+                        }
+
+                        let followers = document.getElementById("followers");
+                        document.getElementById("followersCount").innerText = "Followers (" + data.followers.length + "):" ;
+                        followers.innerHTML = "";
+                        for(let i = 0; i < data.followers.length; i++){
+                            let li = document.createElement("li");
+                            let a = document.createElement("a");
+                            a.href = "/profile/" + data.followers[i];
+                            a.innerText = data.followers[i];
+                            li.appendChild(a);
+                            followers.appendChild(li);
+                        }
+
+                });
+            }
+            
 
             let imgsPath = [];
             const container = document.getElementById("container");
@@ -28,10 +82,7 @@
                         container.appendChild(img2);
                     }
 
-            });
-
-            
-
+            });           
         </script>
 
     </body>

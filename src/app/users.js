@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('./models/user.js'); // get our mongoose model
 const tokenChecker = require('./tokenChecker.js');
+const jwt = require('jsonwebtoken');
 
 // Questa rotta deve essere autenticata
 router.get('/me', tokenChecker, async (req, res) => {
@@ -12,12 +13,14 @@ router.get('/me', tokenChecker, async (req, res) => {
     
     // https://mongoosejs.com/docs/api.html#model_Model.find
     let user = await User.findOne({_id: req.loggedUser.id});
-    
+
     res.status(200).json({
-        self: '/api/v1/users/' + user.id,
+        self: req.loggedUser.username,
         email: user.email,
         pictures : user.pictures,
         username: user.username,
+        followers: user.followers,
+        follows: user.follows,
     });
 });
 
@@ -33,11 +36,21 @@ router.get('/:username', async (req, res) => {
         res.status(400).json({ error: 'User not found!' });
         return;
     }
+    let self = "";
+    if(req.cookies.token){
+        let decoded = await jwt.decode(req.cookies.token);
+        if(decoded && decoded.username){
+            self = decoded.username;
+        }
+    }
+
     res.status(200).json({
-        self: '/api/v1/users/' + user.id,
+        self: self,
         email: user.email,
         pictures : user.pictures,
         username: user.username,
+        followers: user.followers,
+        follows: user.follows,
     });
 });
 
@@ -67,7 +80,9 @@ router.post('', async (req, res) => {
         email: req.body.email,
         password: req.body.password,
         username: req.body.username,
-        pictures: []
+        pictures: [],
+        followers: [],
+        follows: []
     });
     
     if(!user.username || typeof user.email != 'string'){
