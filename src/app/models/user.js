@@ -11,5 +11,15 @@ module.exports = mongoose.model('User', new Schema({
 			type: mongoose.Schema.Types.ObjectId,
         	ref: "Picture"
 		}
+	],
+	followers: [
+		{
+			type: String
+		}
+	],
+	follows: [
+		{
+			type: String
+		}
 	]
 }));
