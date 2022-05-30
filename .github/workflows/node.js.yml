@@ -37,5 +37,5 @@ jobs:
     # https://github.com/marketplace/actions/deploy-to-heroku#procfile-passing
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: "your-heroku-app-name"
+        heroku_app_name: "discoveroo"
         heroku_email: ${{secrets.HEROKU_EMAIL}}
