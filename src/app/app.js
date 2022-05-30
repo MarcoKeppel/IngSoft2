@@ -12,6 +12,7 @@ const gallery = require('./gallery.js');
 const home = require('./home.js');
 const profile = require('./profile.js');
 const follow = require('./follow.js');
+const comment = require('./comment.js');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -40,6 +41,7 @@ app.use('/api/v1/users', users);
 app.use('/api/v1/home', tokenChecker, home);
 app.use('/api/v1/upload', tokenChecker, upload);
 app.use('/api/v1/follow', tokenChecker, follow);
+app.use('/api/v1/comment', tokenChecker, comment);
 app.use('/api/v1/gallery', gallery);
 app.use('/profile', profile);
 // Stavo provando a fare in modo che se esiste un token il sito ti manda direttamente alla home senza passare per il login ma non riesco a capire come usare il token :(

@@ -20,9 +20,10 @@
             <input type="submit">
         </form>
 
-        <p>File upload (auth):</p>
+        <p>Post upload (auth):</p>
         <form action="api/v1/upload" method="post" id="upload" enctype="multipart/form-data">
-            <input type="file" name="myFile" />
+            <input type="text" name="title" placeholder="Title" required>
+            <input type="file" name="myFile" required />
             <input type="submit">
         </form>
     </body>

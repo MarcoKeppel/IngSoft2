@@ -6,10 +6,11 @@ module.exports = mongoose.model('User', new Schema({
 	email: String,
 	password: String,
 	username: String,
-	pictures: [
+	posts: 
+	[
 		{
-			type: mongoose.Schema.Types.ObjectId,
-        	ref: "Picture"
+			type: Schema.Types.ObjectId,
+			ref: 'Post'
 		}
 	],
 	followers: [

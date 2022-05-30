@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const Picture = require('./models/picture.js'); // get our mongoose model
+const Post = require('./models/post.js'); // get our mongoose model
 const User = require('./models/user.js'); // get our mongoose model
 const path_module = require('path');
 
 router.post("/", async (req, res) => {
     if (!req.files) {
       return res.status(400).send("No files were uploaded.");
+    }
+    if(!req.body.title){
+      console.log("No title provided");
+      return res.status(400).send("A title for the post must be provided");
     }
   
     const file = req.files.myFile;
@@ -20,33 +24,47 @@ router.post("/", async (req, res) => {
       console.log(allowed_files_extensions.includes(extension), allowed_file_types.includes(file.mimetype));  
       return res.status(415).send("Invalid file type provided");
     }
-
+    
     console.log(file.name);
-    let picture = new Picture({
-        name: file.name,
-        path: '',
-        time: Date.now()
-    });
-    await picture.save();
-
-    picture.path = picture._id + '.' + file.name.split('.').pop();    // Object ID in DB + extension of original file
-    await picture.save();
-
-    path += picture.path;
-  
+    
     let user = await User.findOne({_id: req.loggedUser.id});
-    if (user){
-        user.pictures.push(picture);
+    
+    if (user)
+    {
+      let post = new Post({
+        title: req.body.title,
+        votes: {
+          likes: 0,
+          dislikes: 0
+        },
+        user: '',
+        comments: [],
+        picture_name: file.name,
+        picture_path: '',
+        time: Date.now()
+      });
+
+      post.user = user;
+      await post.save();
+      user.posts.push(post);
+      await user.save();
+
+      post.picture_path = post._id + '.' + file.name.split('.').pop();    // Object ID in DB + extension of original file
+      await post.save();
+
+      path += post.picture_path;
+
+      file.mv(path, (err) => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        return res.send({ status: "success", path: path });
+      });
     }
-    await user.save();
-
-
-    file.mv(path, (err) => {
-      if (err) {
-        return res.status(500).send(err);
-      }
-      return res.send({ status: "success", path: path });
-    });
+    else
+    {
+      return res.status(400).send("No user found");
+    }
 });
 
 module.exports = router;
