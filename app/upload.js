@@ -36,8 +36,8 @@ router.post("/", tokenChecker, async (req, res) => {
       let post = new Post({
         title: req.body.title,
         votes: {
-          likes: 0,
-          dislikes: 0
+          likes: [],
+          dislikes: []
         },
         user: '',
         comments: [],
