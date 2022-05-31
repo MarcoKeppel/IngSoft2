@@ -9,37 +9,46 @@ router.post("/", async (req, res) => {
     if (!req.body.comment) {
         return res.status(400).send("A comment cannot be blank.");
     }
-    if (!req.body.answer) {
-        return res.status(400).send("A comment must be either an answer or not.");
-    }
-    if(!req.body.post){
+    
+    if(!req.body.postId){
         return res.status(400).send("A comment must be on a post");
     }
 
+    let post = await Post.findOne({_id: req.body.postId});
+    if(!post){
+        return res.status(400).send("Post not found");
+    }
+
+    let answer = false;
+    if(req.body.answer){
+        answer = true
+    }
     let user = await User.findOne({_id: req.loggedUser.id});
 
-    if(user)
-    {
-        let comment = new Comment({
-            text: req.body.comment,
-            votes: {
-                likes: 0,
-                dislikes: 0
-            },
-            user: req.loggedUser.id,
-            post: req.body.post,
-            answer: req.body.answer,
-            time: Date.now()
-        });
+    if(!user){
+        res.status(400).json({ error: 'User not found!' });
+        return; 
+    }
 
-        await comment.save();
-    }
-    else
-    {
-      return res.status(400).send("No user found");
-    }
     
-    return res.status(500).send("Comment was uploaded");
+    let comment = new Comment({
+        text: req.body.comment,
+        votes: {
+            likes: 0,
+            dislikes: 0
+        },
+        user: req.loggedUser.id,
+        post: post._id,
+        answer: answer,
+        time: Date.now()
+    });
+
+    await comment.save();    
+    post.comments.push(comment);
+    await post.save();
+
+    
+    return res.redirect('/post/' + post._id);
 });
 
 module.exports = router;
