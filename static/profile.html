@@ -3,6 +3,8 @@
         <h1 id="username"></h1>
         <div id="container"></div>
         <input type="button" id='follow' onclick="follow()" value="">
+        <h2 id="postCount"></h2>
+        <ul id="posts"></ul>
         <h2 id="followersCount"></h2>
         <ul id="followers"></ul>
 
@@ -69,20 +71,23 @@
             }
             
 
-            let imgsPath = [];
             const container = document.getElementById("container");
             fetch('/api/v1/gallery/'+lastSegment)
                 .then(response => response.json())
                 .then(data => {
-                    for (const img of data) {
-                        
-                        let img2 = document.createElement("img");
-                        img2.setAttribute('src','/img/'+img.path);
-                        
-                        container.appendChild(img2);
-                    }
+                    console.log(data);
 
-            });           
+                    let posts = document.getElementById("posts");
+                    document.getElementById("postCount").innerText = "Posts (" + data.length + "):" ;
+                    for(let i = 0; i < data.length; i++){
+                        let li = document.createElement("li");
+                        let a = document.createElement("a");
+                        a.href = "/post/" + data[i]._id;
+                        a.innerText = data[i].title;
+                        li.appendChild(a);
+                        posts.appendChild(li);
+                    }
+            });
         </script>
 
     </body>

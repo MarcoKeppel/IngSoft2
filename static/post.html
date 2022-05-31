@@ -1,0 +1,90 @@
+<html>
+    <body>
+        <div id="formUpload">
+            <h2>Crea un nuovo post!</h2>
+            <form action="/api/v1/upload" method="post" id="upload" enctype="multipart/form-data">
+                <input type="text" name="title" placeholder="Title" required>
+                <input type="file" name="myFile" required />
+                <input type="submit">
+            </form>
+        </div>
+        <div id="postDetails">
+            <h2 id="postTitle"></h2>
+            <a id="author"></a>
+            <img id="postImage">
+            <p id="postDate"></p>
+            <p id="postVotes"></p>
+            <p>Comments:</p>
+            <ul id="comments"></ul>
+            
+            <form action="/api/v1/comment" method="POST">
+                <p>Submit a comment</p>
+                <input type="text" name="comment" placeholder="Comment">
+                <input type="checkbox" id="answer" name="answer" value="answer">
+                <label for="answer"> This is an answer</label><br>
+                <input type="hidden" id="postId" name="postId">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <script>
+            var parts = window.location.href.split('/');
+            var lastSegment = parts.pop() || parts.pop();  // handle potential trailing slash
+
+            // If we are creating a new post
+            if(lastSegment == "new"){
+                document.getElementById("formUpload").style.display = "block";
+                document.getElementById("postDetails").style.display = "none";
+            }else{
+                document.getElementById("formUpload").style.display = "none";
+                document.getElementById("postDetails").style.display = "block";
+                document.getElementById("postId").value = lastSegment;
+                // Get the info about the post
+                fetch('/api/v1/upload/'+lastSegment)
+                    .then(response => response.json())
+                    .then(result => {
+                        let img = document.getElementById("postImage");
+                        img.setAttribute('src','/img/'+result.picture_path);            
+                        img.setAttribute('alt','/img/'+result.picture_name);
+                         
+                        let date = document.getElementById("postDate");  
+                        date.innerText = "Post created at: " + new Date(result.time).toLocaleString();
+
+                        let title = document.getElementById("postTitle");  
+                        title.innerText = result.title;
+
+                        let votes = document.getElementById("postVotes");
+                        votes.innerText = "Votes: " + result.votes.likes + " Likes, " + result.votes.dislikes + " Dislikes";
+
+                        let author = document.getElementById("author");
+                        author.innerText = "Author: " + result.user.username;
+                        author.setAttribute("href", "/profile/"+result.user.username);
+
+                        let comments = document.getElementById("comments");
+                        comments.innerHTML = "";
+                        console.log(result.comments);
+                        for(let i = 0; i < result.comments.length; i++){
+                            let li = document.createElement("li");
+                            let p = document.createElement("p");
+                            
+                            let a = document.createElement("a");
+                            a.innerText = result.comments[i].user.username;
+                            a.setAttribute("href", "/profile/"+result.comments[i].user.username);
+                            p.appendChild(a);
+
+                            p.innerHTML += ": " + result.comments[i].text + " " + new Date(result.comments[i].time).toLocaleString() + " " + result.comments[i].votes.likes + " Likes, " +result.comments[i].votes.dislikes + " Dislikes";
+
+                            li.appendChild(p);
+                            comments.appendChild(li);
+                        }
+                        
+                });
+            }
+
+            
+            
+
+          
+        </script>
+
+    </body>
+</html>
