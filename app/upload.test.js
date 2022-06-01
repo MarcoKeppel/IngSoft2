@@ -116,7 +116,6 @@ describe('POST /api/v1/upload', () => {
         postId = response.header.location.split("/").pop();
     });
 
-    // TODO
     test('POST /api/v1/upload/:postID with authentication, invalid postID', async () => {
 
         let user = await User.findOne({
