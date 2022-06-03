@@ -5,8 +5,14 @@ var Schema = mongoose.Schema;
 const commentSchema = new Schema({ 
 	text: String,
     votes: {        // Contains the id of users that voted on the comment
-        likes: [String],
-        dislikes: [String]
+        likes: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+        dislikes: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }]
     },
     user:  
     {
