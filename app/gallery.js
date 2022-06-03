@@ -32,7 +32,7 @@ router.get("/me", tokenChecker, async (req, res) => {
         return;
     }
 
-	let user = await User.findOne({username: req.params.username}).select('email posts -_id').populate('posts', 'title').lean();
+	let user = await User.findOne({username: req.loggedUser.username}).select('email posts -_id').populate('posts', 'title').lean();
 
 	let posts = user.posts;
 	posts.sort( (a, b) => {
