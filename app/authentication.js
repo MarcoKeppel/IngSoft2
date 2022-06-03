@@ -14,7 +14,7 @@ router.post('', async function(req, res) {
 	let user = await User.findOne({
 		email: req.body.email
 	}).exec();
-	
+
 	// user not found
 	if (!user) {
 		res.json({ success: false, message: 'Authentication failed. User not found.' });

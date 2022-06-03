@@ -4,9 +4,15 @@ var Schema = mongoose.Schema;
 // set up a mongoose model
 const postSchema = new Schema({
     title: String,
-    votes: {
-        likes: Number,
-        dislikes: Number,
+    votes: {        // Contains the id of users that voted on the post
+        likes: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+        dislikes: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }]
     },
 	user:
     {
@@ -24,9 +30,10 @@ const postSchema = new Schema({
 	time: Number	// Time of upload
 });
 
+// TODO: Modify it so it works
 // Calling status gives the number of likes displayed
 postSchema.virtual('status').get(function(){
-    return this.votes.likes - this.votes.dislikes;
+    return this.votes.likes.length - this.votes.dislikes.length;
 });
 
 const post = mongoose.model('Post', postSchema);
