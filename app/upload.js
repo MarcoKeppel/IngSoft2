@@ -76,48 +76,40 @@ router.get('/:postID', async (req, res) => {
   }
   
   // https://mongoosejs.com/docs/api.html#model_Model.find
-  let post = await Post.findOne({_id: req.params.postID});
+  let post = await Post.findOne({_id: req.params.postID})
+    .select("title text votes user comments picture_name picture_path time -_id")
+    //.select("comments -_id")
+    .populate([
+      {
+        path: "comments",
+        model: Comment,
+        select: "text votes user answer time -_id",
+        populate: {
+          path: "user",
+          model: User,
+          select: "username -_id",
+        }
+      },
+      {
+        path: "user",
+        select: "username -_id",
+        model: User
+      }
+    ])
+    .lean()
+
   if(!post){
       res.status(400).json({ error: 'Post not found!' });
       return;
   }
 
   // This sould not be necessary, but let's check it anyway
-  let user = await User.findOne({_id: post.user});
-  if(!user){
+  if(!post.user.hasOwnProperty("username")){
       res.status(400).json({ error: 'User not found!' });
       return; 
   }
 
-  let comments = [];
-  for(let i = 0; i < post.comments.length; i++){
-    let comment = await Comment.findOne({_id: post.comments[i]});
-    if(comment){
-      let userComment = await User.findOne({_id: comment.user._id});
-      let tmp_comment = {};
-      tmp_comment.text = comment.text;
-      tmp_comment.votes = comment.votes;
-      tmp_comment.user = {
-        username : userComment.username,
-      };
-      tmp_comment.time = comment.time;
-      comments.push(tmp_comment);
-    }
-  }
-  console.log(comments);
-
-  res.status(200).json({
-    title: post.title,
-    text: post.text,
-    votes: post.votes,
-    user: {
-      username: user.username,      
-    },
-    comments: comments,
-    picture_name: post.picture_name,
-    picture_path: post.picture_path,
-    time: post.time
-  });
+  res.status(200).json(post);
 });
 
 module.exports = router;
