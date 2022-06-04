@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const fileUpload = require("express-fileupload");
 const path = require("path");
+const cors = require('cors');
 const app = express();
 
 const authentication = require('./authentication.js');
@@ -27,6 +28,8 @@ app.use(fileUpload({
  }));
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 app.use('/', express.static(process.env.FRONTEND || 'static'));
 // If process.env.FRONTEND folder does not contain index.html then use the one from static
