@@ -3,7 +3,6 @@ const router = express.Router();
 const Post = require('./models/post.js'); // get our mongoose model
 const User = require('./models/user.js'); // get our mongoose model
 const Comment = require('./models/comment.js');
-const path_module = require('path');
 
 router.post("/", async (req, res) => {
     if (!req.body.comment) {
@@ -34,8 +33,8 @@ router.post("/", async (req, res) => {
     let comment = new Comment({
         text: req.body.comment,
         votes: {
-            likes: 0,
-            dislikes: 0
+            likes: [],
+            dislikes: []
         },
         user: req.loggedUser.id,
         post: post._id,
