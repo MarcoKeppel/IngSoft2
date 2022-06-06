@@ -41,12 +41,26 @@ paths:
                   type: string
                   format: password
       responses:
-        200:
+        302:
           description: User authenticated successfully
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+        401:
+          description: User authentication not successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthenticationResponse'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    emum:
+                      - false
+                  message:
+                    type: string
                 
   /users:
     get:
@@ -73,7 +87,7 @@ paths:
     post:
       description: >-
         TODO
-      summary: Create a user
+      summary: Create a new user
       requestBody:
         required: true
         content:
@@ -93,12 +107,38 @@ paths:
                   error:
                     description: Descriptive, human-readable,  error message
                     type: string
+                    
+  /users/me:
+    get:
+      description: >-
+        TODO
+      summary: Fetch logged in user info
+      responses:
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                
+                  
+  /users/{username}:
+    get:
+      description: >-
+        TODO
+      summary: TODO
+      responses:
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                
     
   /upload:
     post:
       description: >-
         TODO
-      summary: Upload a new picture
+      summary: Upload a new post
       requestBody:
         required: true
         content:
@@ -113,6 +153,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UploadResponse'
+  
+  /upload/{postID}:
+    get:
+      description: >-
+        TODO
+      summary: Get uploaded post
+      parameters:
+        - in: path
+          name: postID
+          required: true
+          schema:
+            type: string
+          description: ID of the post
+      responses:
+        # TODO should be 201?
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
                 
   /gallery:
     get:
@@ -127,7 +188,27 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Picture'
+                  $ref: '#/components/schemas/Post'
+  
+  /follow/{username}:
+    get:
+      description: >-
+        TODO
+      summary: Follow/unfollow a user
+      responses:
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowResponse'
+        400:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowResponse'
+
 
 components:
   schemas:
@@ -167,11 +248,14 @@ components:
         email:
           type: string
           format: email
+        username:
+          type: string
         password:
           type: string
           format: password
       required:
         - email
+        - username
         - password
     
     UploadRequest:
@@ -180,8 +264,11 @@ components:
         myFile:
           type: string
           format: binary
+        title:
+          type: string
       required:
         - myFile
+        - title
     
     UploadResponse:
       type: object
@@ -192,13 +279,57 @@ components:
         path:
           type: string
     
-    Picture:
+    FollowResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    
+    Post:
       type: object
       properties:
         user:
+          type: object
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+              format: email
+        picture_name:
           type: string
-        path:
-          type: string
+        picture_path:
+         type: string
         time:
-          description: Picture upload time (timestamp, in milliseconds)
           type: integer
+          description: Post upload time (timestamp, in milliseconds)
+        title:
+          type: string
+        text:
+          type: string
+        votes:
+          $ref: '#/components/schemas/votes_compact'
+        comments:
+          $ref: '#/components/schemas/comments_compact'
+    
+    votes_compact:
+      type: object
+      properties:
+        likes:
+          type: array
+          items:
+            type: string
+            format: id
+        dislikes:
+          type: array
+          items:
+            type: string
+            format: id
+    
+    comments_compact:
+          type: array
+          items:
+            type: string
+            format: id
