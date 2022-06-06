@@ -5,6 +5,8 @@ const User = require('./models/user.js'); // get our mongoose model
 const Comment = require('./models/comment.js'); // get our mongoose model
 const path_module = require('path');
 const tokenChecker = require('./tokenChecker.js');
+const notify = require('./notification.js');
+require('./notification.js')
 
 router.post("/", tokenChecker, async (req, res) => {
     if (!req.files) {
@@ -53,6 +55,7 @@ router.post("/", tokenChecker, async (req, res) => {
 
       post.picture_path = post._id + '.' + file.name.split('.').pop();    // Object ID in DB + extension of original file
       await post.save();
+      notify(post._id);
 
       path += post.picture_path;
 

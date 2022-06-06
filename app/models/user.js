@@ -22,5 +22,14 @@ module.exports = mongoose.model('User', new Schema({
 		{
 			type: String
 		}
+	],
+	notifications: [
+		{
+			seen: Boolean,
+			post: {
+				type: Schema.Types.ObjectId,
+				ref: 'Post'
+			}
+		}
 	]
 }));
