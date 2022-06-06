@@ -26,10 +26,8 @@ module.exports = mongoose.model('User', new Schema({
 	notifications: [
 		{
 			seen: Boolean,
-			post: {
-				type: Schema.Types.ObjectId,
-				ref: 'Post'
-			}
+			obj: Schema.Types.ObjectId,
+			class: String,
 		}
 	]
 }));

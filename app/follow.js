@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
 const User = require('./models/user.js');
+const notify = require('./notification.js');
 
 
 router.get('/:username', async (req, res) => {
@@ -30,6 +30,7 @@ router.get('/:username', async (req, res) => {
         me.follows.push(other.username);
         other.followers.push(me.username);
         text = "Unfollow";
+        notify("follow", me._id.toString(), other._id.toString());
     }
     
     await me.save();
