@@ -42,16 +42,17 @@ router.post('', async function(req, res) {
 
 	res.cookie('token', token);
 
-	res.redirect('/api/v1/home');
-	/*
+	// res.redirect('/api/v1/home');
+	
 	res.json({
 		success: true,
-		message: 'Enjoy your token!',
+		// message: 'Enjoy your token!',
 		token: token,
-		email: user.email,
 		id: user._id,
-		self: "api/v1/" + user._id
-	});*/
+		email: user.email,
+		username: user.username,
+		// self: "api/v1/users/" + user.username
+	});
 });
 
 module.exports = router;
