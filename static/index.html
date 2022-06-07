@@ -7,6 +7,7 @@
         
         <p><a href="/login">Login</a></p>
         <p><a href="/register">Registrazione</a></p>
+        <p><a href="#" onclick="logout();">Logout</a></p>
         <p id="welcome"></p>
         <p><a href="/post/new">Post upload</a></p>
 
@@ -76,6 +77,15 @@
                             posts.appendChild(div);
                         }
                 });
+
+
+            // Logout function
+            function logout() {
+
+                fetch('/logout').then((res) => {
+                    location.reload();
+                });
+            }
 
         </script>
         

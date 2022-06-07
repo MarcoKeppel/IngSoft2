@@ -57,6 +57,10 @@ app.use('/profile', profile);
 app.use('/post', post);
 app.use('/login', login);
 app.use('/register', register);
+app.use("/logout", tokenChecker, (req, res) => {
+	res.clearCookie("token");
+	res.json({ success: true });
+});
 
 app.use((req, res) => {
     res.status(404);
