@@ -43,8 +43,8 @@
                     .then(response => response.json())
                     .then(result => {
                         let img = document.getElementById("postImage");
-                        img.setAttribute('src','/img/'+result.picture_path);            
-                        img.setAttribute('alt','/img/'+result.picture_name);
+                        img.setAttribute('src','/api/v1/image/'+result.picture_path);            
+                        img.setAttribute('alt','/api/v1/image/'+result.picture_name);
                          
                         let date = document.getElementById("postDate");  
                         date.innerText = "Post created at: " + new Date(result.time).toLocaleString();

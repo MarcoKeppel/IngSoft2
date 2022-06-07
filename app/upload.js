@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
 const Post = require('./models/post.js'); // get our mongoose model
 const User = require('./models/user.js'); // get our mongoose model
 const Comment = require('./models/comment.js'); // get our mongoose model
+const ImageFile = require('./models/imageFile.js');
+
 const path_module = require('path');
+const fs = require('fs');
 const tokenChecker = require('./tokenChecker.js');
 const notify = require('./notification.js');
 
@@ -59,11 +63,29 @@ router.post("/", tokenChecker, async (req, res) => {
       path += post.picture_path;
 
       file.mv(path, (err) => {
+
         if (err) {
           return res.status(500).send(err);
         }
+
+        let imageFile = new ImageFile({
+          filename: post.picture_path,
+          image: {
+            data: fs.readFileSync(path),
+            contentType: file.mimetype
+          }
+        });
+        imageFile.save();
+
         return res.redirect('/post/' + post._id);
       });
+
+      // file.mv(path, (err) => {
+      //   if (err) {
+      //     return res.status(500).send(err);
+      //   }
+      //   return res.redirect('/post/' + post._id);
+      // });
     }
     else
     {
