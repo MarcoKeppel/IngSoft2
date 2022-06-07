@@ -81,7 +81,7 @@ describe('POST /api/v1/upload with authentication', () => {
         return request(app).post('/api/v1/upload')
         .set('x-access-token', token)
         .field("title", "sample title")
-        .expect(400, "No files were uploaded.");
+        .expect(400, { success: false, error: "No files were uploaded." });
     });
 
     test('POST /api/v1/upload with authentication, without providing a title', async () => {
@@ -89,7 +89,7 @@ describe('POST /api/v1/upload with authentication', () => {
         return request(app).post('/api/v1/upload')
         .set('x-access-token', token)
         .attach("myFile", path.resolve(__dirname, './upload.js'))
-        .expect(400, "A title for the post must be provided");
+        .expect(400, { success: false, error: "A title for the post must be provided" });
     });
 
     test('POST /api/v1/upload with authentication, submitting a non-image file', async () => {
@@ -98,7 +98,7 @@ describe('POST /api/v1/upload with authentication', () => {
         .set('x-access-token', token)
         .field("title", "sample title")
         .attach("myFile", path.resolve(__dirname, './upload.js'))
-        .expect(415, "Invalid file type provided");
+        .expect(415, { success: false, error: "Invalid file type provided" });
     });
 
     let postId;
@@ -112,10 +112,10 @@ describe('POST /api/v1/upload with authentication', () => {
         .field("title", "sample title")
         .attach("myFile", buffer, "image.png");
 
-        expect(response.statusCode).toBe(302);
-        expect(response.header.location).toMatch(/^\/post\/[0-9a-fA-F]{24}$/);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.location).toMatch(/^\/post\/[0-9a-fA-F]{24}$/);
 
-        postId = response.header.location.split("/").pop();
+        postId = response.body.location.split("/").pop();
     });
 
     test('POST /api/v1/upload/:postID with authentication, invalid postID', async () => {
@@ -132,13 +132,13 @@ describe('POST /api/v1/upload with authentication', () => {
         .set('x-access-token', token);
         // console.log(response.body)
         expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('title', expect.any(String));
-        expect(response.body).toHaveProperty('votes', expect.any(Object));
-        expect(response.body).toHaveProperty('user', expect.any(Object));
-        expect(response.body.user).toHaveProperty('username', expect.any(String));
-        expect(response.body).toHaveProperty('comments', expect.any(Array));
-        expect(response.body).toHaveProperty('picture_name', expect.any(String));
-        expect(response.body).toHaveProperty('picture_path', expect.any(String));
-        expect(response.body).toHaveProperty('time', expect.any(Number));
+        expect(response.body.post).toHaveProperty('title', expect.any(String));
+        expect(response.body.post).toHaveProperty('votes', expect.any(Object));
+        expect(response.body.post).toHaveProperty('user', expect.any(Object));
+        expect(response.body.post.user).toHaveProperty('username', expect.any(String));
+        expect(response.body.post).toHaveProperty('comments', expect.any(Array));
+        expect(response.body.post).toHaveProperty('picture_name', expect.any(String));
+        expect(response.body.post).toHaveProperty('picture_path', expect.any(String));
+        expect(response.body.post).toHaveProperty('time', expect.any(Number));
     });
 });
