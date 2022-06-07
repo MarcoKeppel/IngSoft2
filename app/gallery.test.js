@@ -67,8 +67,6 @@ afterAll( async () => {
     }
 
     mongoose.connection.close(true);
-
-    mongoose.connection.close(true);
 });
 
 
@@ -85,8 +83,7 @@ describe('GET /api/v1/gallery without authentication', () => {
     test('GET /api/v1/gallery/:username', async () => {
 
         const response = await request(app)
-            .get('/api/v1/gallery/example')
-            .set('x-access-token', token);
+            .get('/api/v1/gallery/example');
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(expect.any(Array));
