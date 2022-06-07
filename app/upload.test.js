@@ -1,32 +1,70 @@
 const app = require('./app');
 const mongoose = require('mongoose');
 const User = require('./models/user.js');
+const Post = require('./models/post.js');
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 
-describe('POST /api/v1/upload', () => {
 
-    beforeAll( async () => {
-        jest.setTimeout(8000);
-        app.locals.db = await mongoose.connect(process.env.DB_URL);
-    });
-    afterAll( () => {
-        mongoose.connection.close(true);
-    });
-    
+beforeAll( async () => {
+    jest.setTimeout(8000);
+    app.locals.db = await mongoose.connect(process.env.DB_URL);
+});
+afterAll( async () => {
+
+    // Delete posts and images posted by user "example"
+
+    let userId = await User.findOne({ email: "mail@example.com" }).lean();
+
+    let posts = await Post.find({ user: userId }).lean();
+    // console.log("Posts to be deleted:");
+    // console.log(posts);
+
+    // console.log("Deleting...");
+    for (let post of posts) {
+
+        await Post.deleteOne({ _id: post._id });
+    }
+
+    mongoose.connection.close(true);
+});
+
+
+describe('POST /api/v1/upload without authentication', () => {
+
     test('POST /api/v1/upload without authentication', () => {
         return request(app).post('/api/v1/upload')
         //.set('Accept', 'application/json')
         .field("title", "sample title")
         .expect(401, { success: false, message: "No token provided." });
     });
+});
 
-    test('POST /api/v1/upload with authentication, without submitting a file', async () => {
+
+describe('POST /api/v1/upload with authentication', () => {
+
+    let token;
+
+    beforeAll( async () => {
 
         let user = await User.findOne({
             email: "mail@example.com"
         }).exec();
+
+        // If example user does not exist, create it
+        if (!user) {
+            user = new User({
+                email: "mail@example.com",
+                password: "example",
+                username: "example",
+                pictures: [],
+                followers: [],
+                follows: []
+            });
+            user = await user.save();
+        }
+
         let payload = {
             email: user.email,
             id: user._id,
@@ -35,7 +73,10 @@ describe('POST /api/v1/upload', () => {
         let options = {
             expiresIn: 86400
         }
-        let token = jwt.sign(payload, process.env.SUPER_SECRET, options);
+        token = jwt.sign(payload, process.env.SUPER_SECRET, options);
+    });
+
+    test('POST /api/v1/upload with authentication, without submitting a file', async () => {
 
         return request(app).post('/api/v1/upload')
         .set('x-access-token', token)
@@ -45,19 +86,6 @@ describe('POST /api/v1/upload', () => {
 
     test('POST /api/v1/upload with authentication, without providing a title', async () => {
 
-        let user = await User.findOne({
-            email: "mail@example.com"
-        }).exec();
-        let payload = {
-            email: user.email,
-            id: user._id,
-            username: user.username	
-        }
-        let options = {
-            expiresIn: 86400
-        }
-        let token = jwt.sign(payload, process.env.SUPER_SECRET, options);
-
         return request(app).post('/api/v1/upload')
         .set('x-access-token', token)
         .attach("myFile", path.resolve(__dirname, './upload.js'))
@@ -65,19 +93,6 @@ describe('POST /api/v1/upload', () => {
     });
 
     test('POST /api/v1/upload with authentication, submitting a non-image file', async () => {
-
-        let user = await User.findOne({
-            email: "mail@example.com"
-        }).exec();
-        let payload = {
-            email: user.email,
-            id: user._id,
-            username: user.username	
-        }
-        let options = {
-            expiresIn: 86400
-        }
-        let token = jwt.sign(payload, process.env.SUPER_SECRET, options);
 
         return request(app).post('/api/v1/upload')
         .set('x-access-token', token)
@@ -89,19 +104,6 @@ describe('POST /api/v1/upload', () => {
     let postId;
 
     test('POST /api/v1/upload with authentication, submitting an image file', async () => {
-
-        let user = await User.findOne({
-            email: "mail@example.com"
-        }).exec();
-        let payload = {
-            email: user.email,
-            id: user._id,
-            username: user.username	
-        }
-        let options = {
-            expiresIn: 86400
-        }
-        let token = jwt.sign(payload, process.env.SUPER_SECRET, options);
 
         const buffer = Buffer.from(path.resolve(__dirname, "./files/628b7f93785eab9840743db7.png"));
 
@@ -118,19 +120,6 @@ describe('POST /api/v1/upload', () => {
 
     test('POST /api/v1/upload/:postID with authentication, invalid postID', async () => {
 
-        let user = await User.findOne({
-            email: "mail@example.com"
-        }).exec();
-        let payload = {
-            email: user.email,
-            id: user._id,
-            username: user.username	
-        }
-        let options = {
-            expiresIn: 86400
-        }
-        let token = jwt.sign(payload, process.env.SUPER_SECRET, options);
-
         const response = await request(app).get('/api/v1/upload/000000000000000000000000')
         .set('x-access-token', token);
 
@@ -139,22 +128,9 @@ describe('POST /api/v1/upload', () => {
 
     test('POST /api/v1/upload/:postID with authentication, valid postID', async () => {
 
-        let user = await User.findOne({
-            email: "mail@example.com"
-        }).exec();
-        let payload = {
-            email: user.email,
-            id: user._id,
-            username: user.username	
-        }
-        let options = {
-            expiresIn: 86400
-        }
-        let token = jwt.sign(payload, process.env.SUPER_SECRET, options);
-
         const response = await request(app).get('/api/v1/upload/' + postId)
         .set('x-access-token', token);
-        console.log(response.body)
+        // console.log(response.body)
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('title', expect.any(String));
         expect(response.body).toHaveProperty('votes', expect.any(Object));

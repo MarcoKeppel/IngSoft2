@@ -11,7 +11,7 @@ async function notify(classification, toNotify, userID)
     console.log(userID);
     if(classification === "post")
     {
-        let notification = {seen: false, obj: toNotify, class: "post"};
+        let notification = {seen: false, info: toNotify, class: "post"};
         let post = await Post.findById(toNotify).populate('user', 'followers').exec();
         let followers = post.user.followers;
         for(const i of followers)
@@ -24,23 +24,30 @@ async function notify(classification, toNotify, userID)
     }
     if(classification === "follow")
     {
-        let notification = {seen: false, obj: toNotify, class: "follow"};
+        let other = await User.findById(toNotify);
+        
+        let notification = {seen: false, info: other.username, class: "follow"};
+        console.log(notification);
         let user = await User.findById(userID);
         user.notifications.push(notification);
         user.save();
+        console.log(user.notifications);
         return;
     }
     if(classification === "comment")
     {
         let comment = await Comment.findById(toNotify);
-        if(comment.user.toString() === userID)
+        let post = await Post.findById(comment.post);
+        
+        if(post.user.toString() === userID)
         {
-            console.log("Cannot send notification for the users' own comments");
+            console.log("Don't notify post author about his own comment");
             return;
         }
         
-        let user = await User.findById(userID);
-        let notification = {seen: false, obj: toNotify, class: "comment"};
+        // Notify the author of the post about the comment
+        let user = await User.findById(post.user._id);
+        let notification = {seen: false, info: toNotify, class: "comment"};
         user.notifications.push(notification);
         user.save();
         return;

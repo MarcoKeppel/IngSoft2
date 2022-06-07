@@ -26,7 +26,7 @@ module.exports = mongoose.model('User', new Schema({
 	notifications: [
 		{
 			seen: Boolean,
-			obj: Schema.Types.ObjectId,
+			info: String,
 			class: String,
 		}
 	],

@@ -1,9 +1,16 @@
 <html>
-    <body onload="updateInfo()">
+    <head>
+        <title>Profile</title>
+        <script src="/profile.js"></script>
+    </head>
+    <body onload="finishedLoading()">
         <h1 id="username"></h1>
         <div id="container"></div>
         <input type="button" id='follow' onclick="follow()" value="">
+      
         <input type="button" id='buyCoupon' onclick="coupon()" value="Buy coupons!">
+      
+        <div id="errorFollow"></div>
         <h2 id="postCount"></h2>
         <ul id="posts"></ul>
         <h2 id="followersCount"></h2>
@@ -11,6 +18,7 @@
 
         <h2 id="followsCount"></h2>
         <ul id="follows"></ul>
+
         <div id="error"></div>
         <script>
             var parts = window.location.href.split('/');

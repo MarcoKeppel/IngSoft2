@@ -7,26 +7,27 @@ const jwt = require('jsonwebtoken');
 // Questa rotta deve essere autenticata
 router.get('/me', tokenChecker, async (req, res) => {
     if(!req.loggedUser) {
-        res.status(400).json({ error: 'You have to login!' });
+        res.status(400).json({ success: false, error: 'You have to login!' });
         return;
     }
     
     // https://mongoosejs.com/docs/api.html#model_Model.find
     let user = await User.findOne({_id: req.loggedUser.id});
-
     res.status(200).json({
+        success: true,
         self: req.loggedUser.username,
         email: user.email,
         pictures : user.pictures,
         username: user.username,
         followers: user.followers,
         follows: user.follows,
+        notifications: user.notifications,
     });
 });
 
 router.get('/:username', async (req, res) => {  
     if(!req.params.username){
-        res.status(400).json({ error: 'You have to specify a username!' });
+        res.status(400).json({ success: false, error: 'You have to specify a username!' });
         return;
     }
     
@@ -45,6 +46,7 @@ router.get('/:username', async (req, res) => {
     }
 
     res.status(200).json({
+        success: true,
         self: self,
         email: user.email,
         pictures : user.pictures,
@@ -87,44 +89,51 @@ router.post('', async (req, res) => {
     });
     
     if(!user.username || typeof user.email != 'string'){
-        res.status(400).json({ error: 'Username is required!' });
+        res.status(400).json({ error: 'Username is required!', success: false });
         return;
     }
-    if(user.username == "me"){
-        res.status(400).json({ error: "Username cannot be 'me'!" });
+    if(['me', 'example', 'test'].includes(user.username)){
+        res.status(400).json({ error: "Username cannot be one of ['me', 'example', 'test']!", success: false });
         return;
     }
     if(!user.password || typeof user.email != 'string'){
-        res.status(400).json({ error: 'Password is required!' });
+        res.status(400).json({ error: 'Password is required!', success: false });
         return;
     }
 
     if (!user.email || typeof user.email != 'string' || !checkIfEmailInString(user.email)) {
-        res.status(400).json({ error: 'The field "email" must be a non-empty string, in email format' });
+        res.status(400).json({ error: 'The field "email" must be a non-empty string, in email format', success: false });
         return;
     }
     let emailExists = await emailAlreadyExists(user.email);
     let userExists = await userAlreadyExists(user.username);
     
     if (emailExists) {
-        res.status(400).json({ error: 'A user with the email ' + user.email + ' already exists.' });
+        res.status(400).json({ error: 'A user with the email ' + user.email + ' already exists.', success: false });
         return;
     }
 
     if (userExists) {
-        res.status(400).json({ error: 'A user with the username ' + user.username  + ' already exists.' });
+        res.status(400).json({ error: 'A user with the username ' + user.username  + ' already exists.', success: false });
         return;
     }
 
     
 	user = await user.save();
-    
-    let userId = user.id;
-    /**
-     * Link to the newly created resource is returned in the Location header
-     * https://www.restapitutorial.com/lessons/httpmethods.html
-     */
-    res.location("/api/v1/users/" + userId).status(201).send();
+
+    // If a registration is successful set a token and "login"
+	var payload = {
+		email: user.email,
+		id: user._id,
+		username: user.username
+		// other data encrypted in the token	
+	}
+	var options = {
+		expiresIn: 86400 // expires in 24 hours
+	}
+	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
+
+    res.status(200).json({token: token, success: true});
 });
 
 

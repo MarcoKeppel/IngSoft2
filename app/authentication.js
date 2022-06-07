@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('./models/user.js'); // get our mongoose model
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const tokenChecker = require('./tokenChecker.js');
 
 
 // ---------------------------------------------------------
@@ -17,14 +18,14 @@ router.post('', async function(req, res) {
 
 	// user not found
 	if (!user) {
-		res.status(401).json({ success: false, message: 'Authentication failed. User not found.' });
+		res.status(401).json({ success: false, error: 'Authentication failed. User not found.' });
 		return;
 	}
 	
 	// check if password matches
 	
 	if (user.password != req.body.password) {
-		res.status(401).json({ success: false, message: 'Authentication failed. Wrong password.' });
+		res.status(401).json({ success: false, error: 'Authentication failed. Wrong password.' });
 		return;
 	}
 	
@@ -40,19 +41,7 @@ router.post('', async function(req, res) {
 	}
 	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
 
-	res.cookie('token', token);
-
-	// res.redirect('/api/v1/home');
-	
-	res.json({
-		success: true,
-		// message: 'Enjoy your token!',
-		token: token,
-		id: user._id,
-		email: user.email,
-		username: user.username,
-		// self: "api/v1/users/" + user.username
-	});
+	res.status(200).json({token: token, success: true});
 });
 
 module.exports = router;
