@@ -6,15 +6,20 @@ const tokenChecker = require('./tokenChecker.js');
 
 router.get("", async (req, res) => {
 	// Get all users from DB
-	let users = await User.find().select("email posts -_id").populate({ path: "posts", select: "title" }).lean();
-
-	console.log(users);
+	let users = await User.find().select("email username posts -_id")
+		.populate([
+			{
+				path: "posts",
+				select: "-__v"
+			}
+		])
+		.lean();
 
 	posts = [];
 
 	users.forEach( (user, u_index) => {
 		users[u_index].posts.forEach((post, p_index) => {
-			users[u_index].posts[p_index].user = user.email;
+			users[u_index].posts[p_index].user = { username: user.username, email: user.email };
 			posts.push(users[u_index].posts[p_index]);
 		});
 	});
