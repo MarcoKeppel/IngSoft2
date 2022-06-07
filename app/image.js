@@ -7,7 +7,6 @@ router.get("/:filename", async (req, res) => {
 
 	// Get image from DB
 	let image = await ImageFile.findOne({filename: req.params.filename});
-console.log(image);
     // If image does not exist, 404
 	if (!image) {
         res.status(404).send();

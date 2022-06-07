@@ -13,11 +13,12 @@ const notify = require('./notification.js');
 
 router.post("/", tokenChecker, async (req, res) => {
     if (!req.files) {
-      return res.status(400).send("No files were uploaded.");
+      res.status(400).json({success:false, error: "No files were uploaded."});
+      return;
     }
     if(!req.body.title){
-      console.log("No title provided");
-      return res.status(400).send("A title for the post must be provided");
+      res.status(400).json({success:false, error: "A title for the post must be provided"});
+      return;
     }
   
     const file = req.files.myFile;
@@ -29,68 +30,59 @@ router.post("/", tokenChecker, async (req, res) => {
     console.log(extension);
     if(!allowed_files_extensions.includes(extension) || !allowed_file_types.includes(file.mimetype)){
       console.log(allowed_files_extensions.includes(extension), allowed_file_types.includes(file.mimetype));  
-      return res.status(415).send("Invalid file type provided");
+      res.status(415).json({success:false, error: "Invalid file type provided"});
     }
-    
-    console.log(file.name);
-    
+
     let user = await User.findOne({_id: req.loggedUser.id});
     
-    if (user)
-    {
-      let post = new Post({
-        title: req.body.title,
-        votes: {
-          likes: [],
-          dislikes: []
-        },
-        user: '',
-        comments: [],
-        picture_name: file.name,
-        picture_path: '',
-        time: Date.now()
-      });
+    if (!user){
+      res.status(400).json({success:false, error: "No user found"});
+      return;
+    }
 
-      post.user = user;
-      await post.save();
-      user.posts.push(post);
-      await user.save();
+    let post = new Post({
+      title: req.body.title,
+      votes: {
+        likes: [],
+        dislikes: []
+      },
+      user: '',
+      comments: [],
+      picture_name: file.name,
+      picture_path: '',
+      time: Date.now()
+    });
 
-      post.picture_path = post._id + '.' + file.name.split('.').pop();    // Object ID in DB + extension of original file
-      await post.save();
-      notify("post", post._id.toString(), req.loggedUser.id);
+    post.user = user;
+    await post.save();
+    user.posts.push(post);
+    await user.save();
 
-      path += post.picture_path;
+    post.picture_path = post._id + '.' + file.name.split('.').pop();    // Object ID in DB + extension of original file
+    await post.save();
+    notify("post", post._id.toString(), req.loggedUser.id);
 
-      file.mv(path, (err) => {
+    path += post.picture_path;
 
-        if (err) {
-          return res.status(500).send(err);
+    file.mv(path, (err) => {
+
+      if (err) {
+        res.status(500).json({success:false, error: err});
+      }
+
+      let imageFile = new ImageFile({
+        filename: post.picture_path,
+        image: {
+          data: fs.readFileSync(path),
+          contentType: file.mimetype
         }
-
-        let imageFile = new ImageFile({
-          filename: post.picture_path,
-          image: {
-            data: fs.readFileSync(path),
-            contentType: file.mimetype
-          }
-        });
-        imageFile.save();
-
-        return res.redirect('/post/' + post._id);
       });
+      imageFile.save();
 
-      // file.mv(path, (err) => {
-      //   if (err) {
-      //     return res.status(500).send(err);
-      //   }
-      //   return res.redirect('/post/' + post._id);
-      // });
-    }
-    else
-    {
-      return res.status(400).send("No user found");
-    }
+      res.status(200).json({success:true, location: '/post/' + post._id});
+
+    });
+    
 });
 
 router.get('/:postID', async (req, res) => {  
@@ -123,17 +115,17 @@ router.get('/:postID', async (req, res) => {
     .lean()
 
   if(!post){
-      res.status(400).json({ error: 'Post not found!' });
+      res.status(400).json({ success: false, error: 'Post not found!' });
       return;
   }
 
   // This sould not be necessary, but let's check it anyway
   if(!post.user.hasOwnProperty("username")){
-      res.status(400).json({ error: 'User not found!' });
+      res.status(400).json({ success: false, error: 'User not found!' });
       return; 
   }
 
-  res.status(200).json(post);
+  res.status(200).json({success: true, post});
 });
 
 module.exports = router;

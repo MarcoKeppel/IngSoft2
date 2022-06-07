@@ -51,11 +51,16 @@ app.use('/api/v1/follow', tokenChecker, follow);
 app.use('/api/v1/comment', tokenChecker, comment);
 app.use('/api/v1/vote', tokenChecker, vote);
 app.use('/api/v1/gallery', gallery);
+app.use('/api/v1/image', image);
 
 app.use('/profile', profile);
 app.use('/post', post);
 app.use('/login', login);
 app.use('/register', register);
+app.use("/logout", tokenChecker, (req, res) => {
+	res.clearCookie("token");
+	res.json({ success: true });
+});
 
 app.use((req, res) => {
     res.status(404);

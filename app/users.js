@@ -88,32 +88,32 @@ router.post('', async (req, res) => {
     });
     
     if(!user.username || typeof user.email != 'string'){
-        res.status(400).json({ error: 'Username is required!' });
+        res.status(400).json({ error: 'Username is required!', success: false });
         return;
     }
     if(['me', 'example', 'test'].includes(user.username)){
-        res.status(400).json({ error: "Username cannot be one of ['me', 'example', 'test']!" });
+        res.status(400).json({ error: "Username cannot be one of ['me', 'example', 'test']!", success: false });
         return;
     }
     if(!user.password || typeof user.email != 'string'){
-        res.status(400).json({ error: 'Password is required!' });
+        res.status(400).json({ error: 'Password is required!', success: false });
         return;
     }
 
     if (!user.email || typeof user.email != 'string' || !checkIfEmailInString(user.email)) {
-        res.status(400).json({ error: 'The field "email" must be a non-empty string, in email format' });
+        res.status(400).json({ error: 'The field "email" must be a non-empty string, in email format', success: false });
         return;
     }
     let emailExists = await emailAlreadyExists(user.email);
     let userExists = await userAlreadyExists(user.username);
     
     if (emailExists) {
-        res.status(400).json({ error: 'A user with the email ' + user.email + ' already exists.' });
+        res.status(400).json({ error: 'A user with the email ' + user.email + ' already exists.', success: false });
         return;
     }
 
     if (userExists) {
-        res.status(400).json({ error: 'A user with the username ' + user.username  + ' already exists.' });
+        res.status(400).json({ error: 'A user with the username ' + user.username  + ' already exists.', success: false });
         return;
     }
 
@@ -132,9 +132,7 @@ router.post('', async (req, res) => {
 	}
 	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
 
-	res.cookie('token', token);
-
-    res.redirect("/");
+    res.status(200).json({token: token, success: true});
 });
 
 

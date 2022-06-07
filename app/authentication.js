@@ -17,14 +17,14 @@ router.post('', async function(req, res) {
 
 	// user not found
 	if (!user) {
-		res.status(401).json({ success: false, message: 'Authentication failed. User not found.' });
+		res.status(401).json({ success: false, error: 'Authentication failed. User not found.' });
 		return;
 	}
 	
 	// check if password matches
 	
 	if (user.password != req.body.password) {
-		res.status(401).json({ success: false, message: 'Authentication failed. Wrong password.' });
+		res.status(401).json({ success: false, error: 'Authentication failed. Wrong password.' });
 		return;
 	}
 	
@@ -40,9 +40,7 @@ router.post('', async function(req, res) {
 	}
 	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
 
-	res.cookie('token', token);
-	
-	res.redirect("/");
+	res.status(200).json({token: token, success: true});
 });
 
 module.exports = router;
