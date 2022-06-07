@@ -10,7 +10,7 @@
         </div>
         <div id="postDetails">
             <h2 id="postTitle"></h2>
-            <a id="author"></a>
+            <p><a id="author"></a></p>
             <img id="postImage">
             <p id="postDate"></p>
             <p id="postVotes"></p>
@@ -45,7 +45,8 @@
                         let img = document.getElementById("postImage");
                         img.setAttribute('src','/img/'+result.picture_path);            
                         img.setAttribute('alt','/img/'+result.picture_name);
-                         
+                        img.style.maxWidth = "400px";
+                        img.style.maxHeight = "400px";
                         let date = document.getElementById("postDate");  
                         date.innerText = "Post created at: " + new Date(result.time).toLocaleString();
 
