@@ -10,17 +10,47 @@
         <p id="welcome"></p>
         <p><a href="/post/new">Post upload</a></p>
 
+        <h2 id="conteggioNotifiche"></h2>
+        <ul id="notifiche"></ul>
         <h2>Posts feed</h2>
         <div id="posts"></div>
-        
-        
 
         <script>
             fetch('/api/v1/users/me')
                     .then(response => response.json())
                     .then(result => {
+                        console.log(result)
                         if(result.success){
                             document.getElementById('welcome').innerHTML = 'Benvenuto <b>' + result.username + "</b>";
+                            let notifiche = document.getElementById("notifiche");
+                            document.getElementById("conteggioNotifiche").innerText = "Notifiche (" + result.followers.length + "):" ;
+                            notifiche.innerHTML = "";
+                            for(let i = 0; i < result.notifications.length; i++){
+                                if(result.notifications[i].class === "follow"){
+                                    notifiche.innerHTML += "<li> <a href='/profile/" + result.notifications[i].info + "'>" + result.notifications[i].info + "</a> ti ha seguito</li>";
+                                }
+                                if(result.notifications[i].class === "post"){
+                                    fetch('/api/v1/upload/'+result.notifications[i].info)
+                                        .then(response => response.json())
+                                        .then(result2 => {
+                                            notifiche.innerHTML += "<li> <a href='/profile/" + result2.user.username + "'>" + result2.user.username + "</a> ha pubblicato: <a href='/post/" + result.notifications[i].info + "'>" + result2.title + "</a></li>";
+                                        });
+                                }
+                                if(result.notifications[i].class === "comment"){
+                                    fetch('/api/v1/comment/'+result.notifications[i].info)
+                                        .then(response => response.json())
+                                        .then(result2 => {
+                                            console.log(result2.post._id);
+                                            fetch('/api/v1/upload/'+result2.post._id)
+                                                .then(response => response.json())
+                                                .then(result3 => {
+                                                    console.log(result3);
+                                                    notifiche.innerHTML += "<li> <a href='/profile/" + result2.user.username + "'>" + result2.user.username + "</a> ha commentato il tuo post con titolo: <a href='/post/" + result2.post._id + "'>" + result3.title + "</a></li>";
+                                                });
+                                        });
+                                    
+                                }
+                            }
                         }
                 });
             fetch('/api/v1/gallery')

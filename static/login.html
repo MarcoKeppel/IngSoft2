@@ -2,14 +2,13 @@
 <html>
     <head>
         <title>Login</title>
-        <script src="script.js"></script>
     </head>
     <body>
         <p>Login:</p>
-        <form method="post" action="api/v1/authentication/" id="login">
+        <form action="api/v1/authentication/" method="POST">
             <input id="loginEmail" type="email" name="email" placeholder="Email">
             <input id="loginPassword" type="password" name="password" placeholder="Password">
-            <input type="submit" onclick="login()">
+            <input type="submit">
         </form>        
     </body>
 </html>

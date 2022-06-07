@@ -47,9 +47,44 @@ router.post("/", async (req, res) => {
     post.comments.push(comment);
     await post.save();
     notify("comment", comment._id.toString(), comment.user.toString());
-
-    
     return res.redirect('/post/' + post._id);
 });
+
+router.get('/:commentID', async (req, res) => {  
+    if(!req.params.commentID){
+        res.status(400).json({ error: 'You have to specify a comment ID!' });
+        return;
+    }
+    
+    // https://mongoosejs.com/docs/api.html#model_Model.find
+    let comment = await Comment.findOne({_id: req.params.commentID})
+      .select("text votes user user post -_id")
+      .populate([
+        {
+          path: "post",
+          model: Post,
+          select: "_id",
+        },
+        {
+          path: "user",
+          select: "username -_id",
+          model: User
+        }
+      ])
+      .lean()
+  
+    if(!comment){
+        res.status(400).json({ error: 'Comment not found!' });
+        return;
+    }
+  
+    // This sould not be necessary, but let's check it anyway
+    if(!comment.user.hasOwnProperty("username")){
+        res.status(400).json({ error: 'User not found!' });
+        return; 
+    }
+  
+    res.status(200).json(comment);
+  });
 
 module.exports = router;
