@@ -13,7 +13,6 @@ router.get('/me', tokenChecker, async (req, res) => {
     
     // https://mongoosejs.com/docs/api.html#model_Model.find
     let user = await User.findOne({_id: req.loggedUser.id});
-
     res.status(200).json({
         success: true,
         self: req.loggedUser.username,
