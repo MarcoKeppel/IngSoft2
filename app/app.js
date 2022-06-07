@@ -15,6 +15,7 @@ const profile = require('./profile.js');
 const follow = require('./follow.js');
 const comment = require('./comment.js');
 const vote = require('./vote.js');
+const coupon = require('./coupon.js');
 const image = require('./image.js');
 const login = require('./login.js');
 const register = require('./register.js');
@@ -52,6 +53,7 @@ app.use('/api/v1/comment', tokenChecker, comment);
 app.use('/api/v1/vote', tokenChecker, vote);
 app.use('/api/v1/gallery', gallery);
 app.use('/api/v1/image', image);
+app.use('/api/v1/coupon', tokenChecker, coupon);
 
 app.use('/profile', profile);
 app.use('/post', post);

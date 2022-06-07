@@ -29,5 +29,6 @@ module.exports = mongoose.model('User', new Schema({
 			info: String,
 			class: String,
 		}
-	]
+	],
+	couponPoints: Number
 }));

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Coupon</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+    <p>
+        <label>Username: </label>
+        <input type="text" placeholder="username" id="username">
+    </p>
+    <p>Location:</p>
+    <div class="flex-container">
+        <div class="flex-c1">
+            <label>
+                <input type="radio" id="l1" name="location" value="livigno">
+                <img src="imgs/livigno.png"><br>
+                <label>Impianto sciistico Livigno</label>
+            </label>
+
+            <label>
+                <input type="radio" id="l2" name="location" value="bondone">
+                <img src="imgs/bondone.png"><br>
+                <label>Impianto sciistico Bondone</label>
+            </label>
+        </div>
+        <div class="flex-c2">
+            <label>
+                <input type="radio" id="l3" name="location" value="latemar">
+                <img src="imgs/latemar.png"><br>
+                <label>Impianto sciistico Latemar</label>
+            </label>
+            <label>
+                <input type="radio" id="l4" name="location" value="roccaraso">
+                <img src="imgs/roccaraso.png"><br>
+                <label>Impianto sciistico Roccaraso</label>
+            </label>
+        </div>
+    </div>
+
+    <p>Price:</p>
+    <div id="group">
+    </div>
+
+
+    <br><button id="btn">Buy the coupon</button>
+
+    <p id="output"></p>
+
+
+    <script>
+        const prices = [500, 1000, 2000, 5000];
+
+        // generate the radio groups        
+        const group = document.querySelector("#group");
+        group.innerHTML = prices.map((price) => `<div>
+        <input type="radio" name="price" value="${price}" id="${price}">
+         <label for="${price}">${price/100} €</label>
+    </div>`).join(' ');
+
+        const btn = document.querySelector('#btn');
+        const radioButtonsL = document.querySelectorAll('input[name="location"]');
+        const radioButtonsP = document.querySelectorAll('input[name="price"]');
+        btn.addEventListener("click", () => {
+            let selectedLocation, selectedPrice;
+            for (const radioButton of radioButtonsL) {
+                if (radioButton.checked) {
+                    selectedLocation = radioButton.value;
+                    break;
+                }
+            }
+            for (const radioButton of radioButtonsP) {
+                if (radioButton.checked) {
+                    selectedPrice = radioButton.value;
+                    break;
+                }
+            }
+
+            if(selectedLocation && selectedPrice)
+                coupon(selectedPrice);
+            else
+                output.innerText = `You have to select all the camps`;            
+        });
+
+        function coupon(selectedPrice) {
+            if (document.getElementById('username').value === "") {
+                output.innerText = "You have to insert your username!";
+            } else {
+                fetch('/api/v1/coupon/update/' + document.getElementById('username').value + "/" + selectedPrice)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result.success)
+                            output.innerHTML = result.message;
+                        else
+                            output.innerText = result.message + ". Coupon: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                    });
+            }
+        }
+    </script>
+</body>
