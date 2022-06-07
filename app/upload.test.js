@@ -1,6 +1,7 @@
 const app = require('./app');
 const mongoose = require('mongoose');
 const User = require('./models/user.js');
+const Post = require('./models/post.js');
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -10,7 +11,22 @@ beforeAll( async () => {
     jest.setTimeout(8000);
     app.locals.db = await mongoose.connect(process.env.DB_URL);
 });
-afterAll( () => {
+afterAll( async () => {
+
+    // Delete posts and images posted by user "example"
+
+    let userId = await User.findOne({ email: "mail@example.com" }).lean();
+
+    let posts = await Post.find({ user: userId }).lean();
+    console.log("Posts to be deleted:");
+    console.log(posts);
+
+    console.log("Deleting...");
+    for (let post of posts) {
+
+        console.log(await Post.deleteOne({ _id: post._id }));
+    }
+
     mongoose.connection.close(true);
 });
 
