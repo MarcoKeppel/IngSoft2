@@ -16,13 +16,15 @@ const profile = require('./profile.js');
 const follow = require('./follow.js');
 const comment = require('./comment.js');
 const vote = require('./vote.js');
+const login = require('./login.js');
+const register = require('./register.js');
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(fileUpload({
     createParentPath: true,
     limits: {
-        fileSize: 1024 * 1024 // 1 MB
+        fileSize: 1024 * 1024 * 3 // 3 MB
     },
     abortOnLimit: true
  }));
@@ -51,7 +53,8 @@ app.use('/api/v1/gallery', gallery);
 app.use('/profile', profile);
 app.use('/post', post);
 app.use('/api/v1/vote', tokenChecker, vote);
-
+app.use('/login', login);
+app.use('/register', register);
 
 app.use((req, res) => {
     res.status(404);
