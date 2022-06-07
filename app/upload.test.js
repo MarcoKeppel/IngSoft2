@@ -18,13 +18,13 @@ afterAll( async () => {
     let userId = await User.findOne({ email: "mail@example.com" }).lean();
 
     let posts = await Post.find({ user: userId }).lean();
-    console.log("Posts to be deleted:");
-    console.log(posts);
+    // console.log("Posts to be deleted:");
+    // console.log(posts);
 
-    console.log("Deleting...");
+    // console.log("Deleting...");
     for (let post of posts) {
 
-        console.log(await Post.deleteOne({ _id: post._id }));
+        await Post.deleteOne({ _id: post._id });
     }
 
     mongoose.connection.close(true);
@@ -130,7 +130,7 @@ describe('POST /api/v1/upload with authentication', () => {
 
         const response = await request(app).get('/api/v1/upload/' + postId)
         .set('x-access-token', token);
-        console.log(response.body)
+        // console.log(response.body)
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('title', expect.any(String));
         expect(response.body).toHaveProperty('votes', expect.any(Object));
