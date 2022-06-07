@@ -22,6 +22,7 @@ router.get('/me', tokenChecker, async (req, res) => {
         username: user.username,
         followers: user.followers,
         follows: user.follows,
+        notifications: user.notifications,
     });
 });
 
@@ -119,13 +120,22 @@ router.post('', async (req, res) => {
 
     
 	user = await user.save();
-    
-    let userId = user.id;
-    /**
-     * Link to the newly created resource is returned in the Location header
-     * https://www.restapitutorial.com/lessons/httpmethods.html
-     */
-    res.location("/api/v1/users/" + userId).status(201).send();
+
+    // If a registration is successful set a token and "login"
+	var payload = {
+		email: user.email,
+		id: user._id,
+		username: user.username
+		// other data encrypted in the token	
+	}
+	var options = {
+		expiresIn: 86400 // expires in 24 hours
+	}
+	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
+
+	res.cookie('token', token);
+
+    res.redirect("/");
 });
 
 

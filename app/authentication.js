@@ -41,18 +41,8 @@ router.post('', async function(req, res) {
 	var token = jwt.sign(payload, process.env.SUPER_SECRET, options); // We should use the enviroment
 
 	res.cookie('token', token);
-
-	// res.redirect('/api/v1/home');
 	
-	res.json({
-		success: true,
-		// message: 'Enjoy your token!',
-		token: token,
-		id: user._id,
-		email: user.email,
-		username: user.username,
-		// self: "api/v1/users/" + user.username
-	});
+	res.redirect("/");
 });
 
 module.exports = router;
