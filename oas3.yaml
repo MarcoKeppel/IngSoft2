@@ -120,6 +120,13 @@ paths:
       description: >-
         TODO
       summary: TODO
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: username of the user to fetch
       responses:
         '200':
           description: TODO
@@ -163,7 +170,7 @@ paths:
           required: true
           schema:
             type: string
-          description: ID of the post
+          description: ID of the post to fetch
       responses:
         # TODO should be 201?
         '200':
@@ -193,6 +200,13 @@ paths:
       description: >-
         TODO
       summary: Follow/unfollow a user
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: username of the user to follow
       security:
         - CookieAuth: []
         - HeaderAuth: []
@@ -210,7 +224,143 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FollowResponse'
+  
+  /comment:
+    post:
+      description: >-
+        TODO
+      summary: Make a new comment on a post
+      security:
+        - CookieAuth: []
+        - HeaderAuth: []
+        - QueryAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '200':
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+                
+  /comment/{commentID}:
+    get:
+      description: >-
+        TODO
+      summary: Fetch a comment
+      parameters:
+        - in: path
+          name: commentID
+          required: true
+          schema:
+            type: string
+          description: ID of the comment to fetch
+      security:
+        - CookieAuth: []
+        - HeaderAuth: []
+        - QueryAuth: []
+      responses:
+        '200':
+          description: TODO
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  comment:
+                    type: string
 
+  /vote/{ID}:
+    post:
+      description: >-
+        TODO
+      summary: Vote a post/comment
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          description: ID of the comment/post to upvote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Decides whether ID refers to a comment or a post
+                vote:
+                  type: number
+                  description: \>0 to upvote, <0 to downvote
+      security:
+        - CookieAuth: []
+        - HeaderAuth: []
+        - QueryAuth: []
+      responses:
+        '200':
+          description: TODO
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  change:
+                    type: number
+                  total:
+                    type: number
+                    
+  /image/{filename}:
+    get:
+      description: >-
+        TODO
+      summary: Fetch an image (posts images)
+      parameters:
+        - in: path
+          name: filename
+          required: true
+          schema:
+            type: string
+          description: Filename of the image to retrieve
+      responses:
+        '200':
+          description: TODO
+          content:
+            image/jpeg:
+            
+  /coupon/{username}/{points}:
+    get:
+      description: >-
+        TODO
+      summary: Get discount coupon
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: Username
+        - in: path
+          name: points
+          required: true
+          schema:
+            type: number
+          description: points
+      responses:
+        '200':
+          description: TODO
+          content:
+            image/jpeg:
 
 components:
   
@@ -288,6 +438,24 @@ components:
         success:
           type: boolean
         message:
+          type: string
+          
+    CommentRequest:
+      type: object
+      # TODO 'required' field
+      properties:
+        comment:
+          type: string
+        postId:
+          type: string
+    
+    CommentResponse:
+      type: object
+      # TODO 'required' field
+      properties:
+        success:
+          type: boolean
+        location:
           type: string
     
     Post:
