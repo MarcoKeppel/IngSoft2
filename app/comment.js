@@ -3,6 +3,7 @@ const router = express.Router();
 const Post = require('./models/post.js'); // get our mongoose model
 const User = require('./models/user.js'); // get our mongoose model
 const Comment = require('./models/comment.js');
+const notify = require('./notification.js');
 
 router.post("/", async (req, res) => {
     if (!req.body.comment) {
@@ -45,6 +46,7 @@ router.post("/", async (req, res) => {
     await comment.save();    
     post.comments.push(comment);
     await post.save();
+    notify("comment", comment._id.toString(), comment.user.toString());
 
     
     return res.redirect('/post/' + post._id);
