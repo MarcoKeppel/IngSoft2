@@ -60,7 +60,8 @@ describe('POST /api/v1/upload with authentication', () => {
                 username: "example",
                 pictures: [],
                 followers: [],
-                follows: []
+                follows: [],
+                notifications: []
             });
             user = await user.save();
         }

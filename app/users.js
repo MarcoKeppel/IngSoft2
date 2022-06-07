@@ -53,6 +53,7 @@ router.get('/:username', async (req, res) => {
         username: user.username,
         followers: user.followers,
         follows: user.follows,
+        notifications: user.notifications,
     });
 });
 
@@ -86,6 +87,7 @@ router.post('', async (req, res) => {
         followers: [],
         follows: [],
         couponPoints: 15000,
+        notifications: []
     });
     
     if(!user.username || typeof user.email != 'string'){

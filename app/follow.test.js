@@ -41,7 +41,8 @@ describe('GET /api/v1/follow with authentication', () => {
                 username: "example",
                 pictures: [],
                 followers: [],
-                follows: []
+                follows: [],
+                notifications: []
             });
             user = await user.save();
         }

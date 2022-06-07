@@ -26,7 +26,8 @@ beforeAll( async () => {
             username: "example",
             pictures: [],
             followers: [],
-            follows: []
+            follows: [],
+            notifications: []
         });
         user = await user.save();
     }
