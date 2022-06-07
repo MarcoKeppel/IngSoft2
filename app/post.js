@@ -1,4 +1,5 @@
 const express = require('express');
+const { default: mongoose } = require('mongoose');
 const router = express.Router();
 const path = require('path');
 const Post = require('./models/post.js');
@@ -16,6 +17,12 @@ router.get('/new', tokenChecker, (req, res) => {
 router.get('/:postID', async (req, res) => {
     if(!req.params.postID){
         res.status(400).json({ error: 'You have to specify a post id!' });
+        return;
+    }
+
+    if(!mongoose.Types.ObjectId.isValid(req.params.postID))
+    {
+        res.status(400).json({ error: 'Not a valid id!' });
         return;
     }
     
