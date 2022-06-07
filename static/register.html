@@ -2,14 +2,16 @@
 <html>
     <head>
         <title>Registrazione</title>
+        <script src="register.js"></script>
     </head>
     <body>
         <p>Registrazione:</p>
-        <form action="api/v1/users/" method="post" id="register">
-            <input type="email" name="email" placeholder="Email">
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <input type="submit">
+        <form onsubmit="return sendData();" name="formRegister">
+            <input type="email" name="email" id="email" placeholder="Email">
+            <input type="text" name="username" id="username" placeholder="Username">
+            <input type="password" name="password" id="password" placeholder="Password">
+            <input type="submit" value="Submit">
         </form>
+        <p id="error"></p>
     </body>
 </html>
