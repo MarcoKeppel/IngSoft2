@@ -17,14 +17,14 @@ router.post('', async function(req, res) {
 
 	// user not found
 	if (!user) {
-		res.json({ success: false, message: 'Authentication failed. User not found.' });
+		res.status(401).json({ success: false, message: 'Authentication failed. User not found.' });
 		return;
 	}
 	
 	// check if password matches
 	
 	if (user.password != req.body.password) {
-		res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+		res.status(401).json({ success: false, message: 'Authentication failed. Wrong password.' });
 		return;
 	}
 	
@@ -42,16 +42,17 @@ router.post('', async function(req, res) {
 
 	res.cookie('token', token);
 
-	res.redirect('/api/v1/home');
-	/*
+	// res.redirect('/api/v1/home');
+	
 	res.json({
 		success: true,
-		message: 'Enjoy your token!',
+		// message: 'Enjoy your token!',
 		token: token,
-		email: user.email,
 		id: user._id,
-		self: "api/v1/" + user._id
-	});*/
+		email: user.email,
+		username: user.username,
+		// self: "api/v1/users/" + user.username
+	});
 });
 
 module.exports = router;
