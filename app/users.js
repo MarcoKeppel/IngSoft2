@@ -91,8 +91,8 @@ router.post('', async (req, res) => {
         res.status(400).json({ error: 'Username is required!' });
         return;
     }
-    if(user.username == "me"){
-        res.status(400).json({ error: "Username cannot be 'me'!" });
+    if(['me', 'example', 'test'].includes(user.username)){
+        res.status(400).json({ error: "Username cannot be one of ['me', 'example', 'test']!" });
         return;
     }
     if(!user.password || typeof user.email != 'string'){

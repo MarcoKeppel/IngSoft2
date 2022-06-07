@@ -15,6 +15,7 @@ const profile = require('./profile.js');
 const follow = require('./follow.js');
 const comment = require('./comment.js');
 const vote = require('./vote.js');
+const image = require('./image.js');
 const login = require('./login.js');
 const register = require('./register.js');
 
@@ -35,7 +36,7 @@ app.use(cors());
 app.use('/', express.static(process.env.FRONTEND || 'static'));
 // If process.env.FRONTEND folder does not contain index.html then use the one from static
 app.use('/', express.static('static'));
-app.use('/img', express.static('app/files'));
+//app.use('/img', express.static('app/files'));
 
 app.use((req,res,next) => {
     console.log(req.method + ' ' + req.url)
@@ -51,7 +52,6 @@ app.use('/api/v1/comment', tokenChecker, comment);
 app.use('/api/v1/vote', tokenChecker, vote);
 app.use('/api/v1/gallery', gallery);
 
-// Pages
 app.use('/profile', profile);
 app.use('/post', post);
 app.use('/login', login);
