@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // Questa rotta deve essere autenticata
 router.get('/me', tokenChecker, async (req, res) => {
     if(!req.loggedUser) {
-        res.status(400).json({ error: 'You have to login!' });
+        res.status(400).json({ success: false, error: 'You have to login!' });
         return;
     }
     
@@ -15,6 +15,7 @@ router.get('/me', tokenChecker, async (req, res) => {
     let user = await User.findOne({_id: req.loggedUser.id});
 
     res.status(200).json({
+        success: true,
         self: req.loggedUser.username,
         email: user.email,
         pictures : user.pictures,
@@ -26,7 +27,7 @@ router.get('/me', tokenChecker, async (req, res) => {
 
 router.get('/:username', async (req, res) => {  
     if(!req.params.username){
-        res.status(400).json({ error: 'You have to specify a username!' });
+        res.status(400).json({ success: false, error: 'You have to specify a username!' });
         return;
     }
     
@@ -45,6 +46,7 @@ router.get('/:username', async (req, res) => {
     }
 
     res.status(200).json({
+        success: true,
         self: self,
         email: user.email,
         pictures : user.pictures,

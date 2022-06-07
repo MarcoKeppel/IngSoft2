@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <p>Login:</p>
+        <form method="post" action="api/v1/authentication/" id="login">
+            <input id="loginEmail" type="email" name="email" placeholder="Email">
+            <input id="loginPassword" type="password" name="password" placeholder="Password">
+            <input type="submit" onclick="login()">
+        </form>        
+    </body>
+</html>
