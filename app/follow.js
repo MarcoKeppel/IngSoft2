@@ -3,12 +3,11 @@ const router = express.Router();
 const User = require('./models/user.js');
 const notify = require('./notification.js');
 
+router.get('/', async (req, res) => {
+    res.status(400).json({ success: false, message: 'You have to specify a username!' });
+});
 
 router.get('/:username', async (req, res) => {
-    if(!req.params.username){
-        res.status(400).json({ success: false, message: 'You have to specify a username!' });
-        return;
-    }
     
     if(req.params.username == req.loggedUser.username || req.params.username == "me" ){
         res.status(400).json({ success: false, message: 'You cannot follow yourself!' });
@@ -26,10 +25,10 @@ router.get('/:username', async (req, res) => {
         // If it is already following this user, unfollow them.
         me.follows = me.follows.filter(e => e !== other.username);
         other.followers = other.followers.filter(e => e !== me.username);
+        text = "Unfollow";
     }else{
         me.follows.push(other.username);
         other.followers.push(me.username);
-        text = "Unfollow";
         notify("follow", me._id.toString(), other._id.toString());
     }
     
