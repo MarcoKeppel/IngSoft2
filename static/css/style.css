@@ -1,0 +1,36 @@
+/* HIDE RADIO */
+#l1, #l2, #l3, #l4{ 
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* IMAGE STYLES */
+  [type=radio] + img {
+    cursor: pointer;
+  }
+  
+  /* CHECKED STYLES */
+  [type=radio]:checked + img {
+    outline: 2px solid #f00;
+  }
+
+  .flex-container{
+    display:flex;    
+  }
+
+  .flex-c1, .flex-c2{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+.flex-c2 > label{
+  margin-bottom: 30px;
+}
+
+.flex-c1 > label{
+  margin-bottom: 30px;
+}

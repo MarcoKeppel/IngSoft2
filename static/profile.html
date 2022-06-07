@@ -3,6 +3,7 @@
         <h1 id="username"></h1>
         <div id="container"></div>
         <input type="button" id='follow' onclick="follow()" value="">
+        <input type="button" id='buyCoupon' onclick="coupon()" value="Buy coupons!">
         <h2 id="postCount"></h2>
         <ul id="posts"></ul>
         <h2 id="followersCount"></h2>
@@ -88,6 +89,17 @@
                         posts.appendChild(li);
                     }
             });
+
+            function coupon(){
+                fetch('/api/v1/coupon/'+lastSegment)
+                    .then(response => response.json())
+                    .then(result => {
+                        if(result.success)
+                            location.href = result.redirect_path;     
+                        else
+                            document.getElementById('error').innerText = result.message; 
+                });
+            }
         </script>
 
     </body>

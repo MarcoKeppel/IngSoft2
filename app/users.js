@@ -82,7 +82,8 @@ router.post('', async (req, res) => {
         username: req.body.username,
         pictures: [],
         followers: [],
-        follows: []
+        follows: [],
+        couponPoints: 15000,
     });
     
     if(!user.username || typeof user.email != 'string'){

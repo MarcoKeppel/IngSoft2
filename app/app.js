@@ -16,6 +16,7 @@ const profile = require('./profile.js');
 const follow = require('./follow.js');
 const comment = require('./comment.js');
 const vote = require('./vote.js');
+const coupon = require('./coupon.js');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -51,6 +52,7 @@ app.use('/api/v1/gallery', gallery);
 app.use('/profile', profile);
 app.use('/post', post);
 app.use('/api/v1/vote', tokenChecker, vote);
+app.use('/api/v1/coupon', tokenChecker, coupon);
 
 
 app.use((req, res) => {
