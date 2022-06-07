@@ -6,16 +6,8 @@ info:
   license:
     name: MIT
     url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
-  servers:
-    - url: https://TODO.com/api/v1
-host: polls.apiblueprint.org
-basePath: /
-schemes:
-- https
-consumes:
-- application/json
-produces:
-- application/json
+servers:
+  - url: https://discoveroo.herokuapp.com/api/v1
 
 paths:
 
@@ -41,14 +33,14 @@ paths:
                   type: string
                   format: password
       responses:
-        302:
+        '302':
           description: User authenticated successfully
           headers:
             Location:
               schema:
                 type: string
                 format: url
-        401:
+        '401':
           description: User authentication not successful
           content:
             application/json:
@@ -57,8 +49,6 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    emum:
-                      - false
                   message:
                     type: string
                 
@@ -74,9 +64,9 @@ paths:
             type: string
             format: email
           required: false
-          desctiption: e-mail address of user to find
+          description: e-mail address of user to find
       responses:
-        200:
+        '200':
           description: TODO
           content:
             application/json:
@@ -95,9 +85,9 @@ paths:
             schema:
               $ref: '#/components/schemas/NewUserRequest'
       responses:
-        201:
+        '201':
           description: TODO
-        404:
+        '404':
           description: TODO
           content:
             application/json:
@@ -113,8 +103,12 @@ paths:
       description: >-
         TODO
       summary: Fetch logged in user info
+      security:
+        - CookieAuth: []
+        - HeaderAuth: []
+        - QueryAuth: []
       responses:
-        200:
+        '200':
           description: TODO
           content:
             application/json:
@@ -127,7 +121,7 @@ paths:
         TODO
       summary: TODO
       responses:
-        200:
+        '200':
           description: TODO
           content:
             application/json:
@@ -139,6 +133,10 @@ paths:
       description: >-
         TODO
       summary: Upload a new post
+      security:
+        - CookieAuth: []
+        - HeaderAuth: []
+        - QueryAuth: []
       requestBody:
         required: true
         content:
@@ -147,7 +145,7 @@ paths:
               $ref: '#/components/schemas/UploadRequest'
       responses:
         # TODO should be 201?
-        200:
+        '200':
           description: TODO
           content:
             application/json:
@@ -168,7 +166,7 @@ paths:
           description: ID of the post
       responses:
         # TODO should be 201?
-        200:
+        '200':
           description: TODO
           content:
             application/json:
@@ -181,7 +179,7 @@ paths:
         TODO
       summary: Get uploaded pictures
       responses:
-        200:
+        '200':
           description: TODO
           content:
             application/json:
@@ -195,14 +193,18 @@ paths:
       description: >-
         TODO
       summary: Follow/unfollow a user
+      security:
+        - CookieAuth: []
+        - HeaderAuth: []
+        - QueryAuth: []
       responses:
-        200:
+        '200':
           description: TODO
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FollowResponse'
-        400:
+        '400':
           description: TODO
           content:
             application/json:
@@ -211,6 +213,7 @@ paths:
 
 
 components:
+  
   schemas:
   
     AuthenticationResponse:
@@ -333,3 +336,20 @@ components:
           items:
             type: string
             format: id
+  
+  securitySchemes:
+    
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    
+    HeaderAuth:
+      type: apiKey
+      in: header
+      name: x-access-token
+      
+    QueryAuth:
+      type: apiKey
+      in: query
+      name: token
