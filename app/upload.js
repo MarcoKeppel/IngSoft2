@@ -27,10 +27,9 @@ router.post("/", tokenChecker, async (req, res) => {
     const allowed_files_extensions = ['.png', '.jpeg', '.jpg', '.gif'];
     const allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
     let extension = path_module.extname(file.name);
-    console.log(extension);
     if(!allowed_files_extensions.includes(extension) || !allowed_file_types.includes(file.mimetype)){
-      console.log(allowed_files_extensions.includes(extension), allowed_file_types.includes(file.mimetype));  
       res.status(415).json({success:false, error: "Invalid file type provided"});
+      return;
     }
 
     let user = await User.findOne({_id: req.loggedUser.id});
@@ -68,6 +67,7 @@ router.post("/", tokenChecker, async (req, res) => {
 
       if (err) {
         res.status(500).json({success:false, error: err});
+        return;
       }
 
       let imageFile = new ImageFile({
