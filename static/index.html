@@ -1,26 +1,53 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login test</title>
-        <script src="script.js"></script>
+        <title>Homepage</title>
     </head>
     <body>
-        <p>Login:</p>
-        <form method="post" action="api/v1/authentication/" id="login">
-            <input id="loginEmail" type="email" name="email" placeholder="Email">
-            <input id="loginPassword" type="password" name="password" placeholder="Password">
-            <input type="submit" onclick="login()">
-        </form>
-        <br><br><br>
-        <p>Registrazione:</p>
-        <form action="api/v1/users/" method="post" id="register">
-            <input type="email" name="email" placeholder="Email">
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <input type="submit">
-        </form>
         
+        <p><a href="/login">Login</a></p>
+        <p><a href="/register">Registrazione</a></p>
+        <p id="welcome"></p>
         <p><a href="/post/new">Post upload</a></p>
+
+        <h2>Posts feed</h2>
+        <div id="posts"></div>
+        
+        
+
+        <script>
+            fetch('/api/v1/users/me')
+                    .then(response => response.json())
+                    .then(result => {
+                        if(result.success){
+                            document.getElementById('welcome').innerHTML = 'Benvenuto <b>' + result.username + "</b>";
+                        }
+                });
+            fetch('/api/v1/gallery')
+                    .then(response => response.json())
+                    .then(data => {
+                        let posts = document.getElementById("posts");
+                        for(let i = 0; i < data.length; i++){
+                            console.log(data[i]);
+                            let div = document.createElement("div");
+                            let hr = document.createElement("hr");                            
+                            let img = document.createElement("img");
+                            img.setAttribute("src", "img/"+data[i].picture_path);
+                            img.style.maxWidth = "400px";
+                            img.style.maxHeight = "400px";
+                            let p = document.createElement("p");
+                            let a = document.createElement("a");
+                            a.href = "/post/" + data[i]._id;
+                            a.innerText = data[i].title;
+                            p.appendChild(a)
+                            div.appendChild(p);
+                            div.appendChild(img);
+                            div.appendChild(hr);
+                            posts.appendChild(div);
+                        }
+                });
+
+        </script>
         
     </body>
 </html>
