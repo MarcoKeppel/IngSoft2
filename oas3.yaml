@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: '1.0'
   title: "Discoveroo"
-  description: TODO description
+  description:
   license:
     name: MIT
     url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
@@ -54,8 +54,7 @@ paths:
                 
   /users:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Fetch user info
       parameters:
         - in: query
@@ -67,7 +66,7 @@ paths:
           description: e-mail address of user to find
       responses:
         '200':
-          description: TODO
+          description:
           content:
             application/json:
               schema:
@@ -75,8 +74,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/UserResponse'
     post:
-      description: >-
-        TODO
+      description: 
       summary: Create a new user
       requestBody:
         required: true
@@ -86,9 +84,9 @@ paths:
               $ref: '#/components/schemas/NewUserRequest'
       responses:
         '201':
-          description: TODO
+          description:
         '404':
-          description: TODO
+          description:
           content:
             application/json:
               schema:
@@ -100,8 +98,7 @@ paths:
                     
   /users/me:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Fetch logged in user info
       security:
         - CookieAuth: []
@@ -109,7 +106,7 @@ paths:
         - QueryAuth: []
       responses:
         '200':
-          description: TODO
+          description:
           content:
             application/json:
               schema:
@@ -117,9 +114,8 @@ paths:
                   
   /users/{username}:
     get:
-      description: >-
-        TODO
-      summary: TODO
+      description: 
+      summary: Get user info
       parameters:
         - in: path
           name: username
@@ -129,7 +125,7 @@ paths:
           description: username of the user to fetch
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -137,8 +133,7 @@ paths:
     
   /upload:
     post:
-      description: >-
-        TODO
+      description: 
       summary: Upload a new post
       security:
         - CookieAuth: []
@@ -153,7 +148,7 @@ paths:
       responses:
         # TODO should be 201?
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -161,8 +156,7 @@ paths:
   
   /upload/{postID}:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Get uploaded post
       parameters:
         - in: path
@@ -174,7 +168,7 @@ paths:
       responses:
         # TODO should be 201?
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -182,12 +176,11 @@ paths:
                 
   /gallery:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Get uploaded pictures
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -197,8 +190,7 @@ paths:
   
   /follow/{username}:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Follow/unfollow a user
       parameters:
         - in: path
@@ -213,13 +205,13 @@ paths:
         - QueryAuth: []
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FollowResponse'
         '400':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -227,8 +219,7 @@ paths:
   
   /comment:
     post:
-      description: >-
-        TODO
+      description: 
       summary: Make a new comment on a post
       security:
         - CookieAuth: []
@@ -242,7 +233,7 @@ paths:
               $ref: '#/components/schemas/CommentRequest'
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -250,8 +241,7 @@ paths:
                 
   /comment/{commentID}:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Fetch a comment
       parameters:
         - in: path
@@ -266,7 +256,7 @@ paths:
         - QueryAuth: []
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -279,8 +269,7 @@ paths:
 
   /vote/{ID}:
     post:
-      description: >-
-        TODO
+      description: 
       summary: Vote a post/comment
       parameters:
         - in: path
@@ -307,7 +296,7 @@ paths:
         - QueryAuth: []
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             application/json:
               schema:
@@ -322,8 +311,7 @@ paths:
                     
   /image/{filename}:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Fetch an image (posts images)
       parameters:
         - in: path
@@ -334,14 +322,13 @@ paths:
           description: Filename of the image to retrieve
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             image/jpeg:
             
   /coupon/{username}/{points}:
     get:
-      description: >-
-        TODO
+      description: 
       summary: Get discount coupon
       parameters:
         - in: path
@@ -358,7 +345,7 @@ paths:
           description: points
       responses:
         '200':
-          description: TODO
+          description: 
           content:
             image/jpeg:
 
